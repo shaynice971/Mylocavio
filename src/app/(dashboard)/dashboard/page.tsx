@@ -33,6 +33,26 @@ export default async function DashboardPage() {
     user?.email?.split("@")[0] ??
     "vous";
 
+  const [
+    { count: nbBiens },
+    { data: biensLoyes },
+    { count: nbQuittances },
+    { count: nbRelances },
+  ] = await Promise.all([
+    supabase.from("biens").select("*", { count: "exact", head: true }),
+    supabase.from("biens").select("loyer, charges").eq("statut", "loue"),
+    supabase.from("quittances").select("*", { count: "exact", head: true }),
+    supabase
+      .from("relances")
+      .select("*", { count: "exact", head: true })
+      .eq("statut", "en_retard"),
+  ]);
+
+  const totalLoyers = (biensLoyes ?? []).reduce(
+    (sum, b) => sum + Number(b.loyer) + Number(b.charges ?? 0),
+    0
+  );
+
   return (
     <div>
       <div className="mb-8">
@@ -47,43 +67,45 @@ export default async function DashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         <StatCard
           title="Nombre de biens"
-          value={0}
+          value={nbBiens ?? 0}
           icon={Home}
           color="bg-[#2A9FD6]"
         />
         <StatCard
           title="Loyers du mois"
-          value="0 €"
+          value={`${totalLoyers.toLocaleString("fr-FR")} €`}
           icon={TrendingUp}
           color="bg-emerald-500"
         />
         <StatCard
           title="Quittances générées"
-          value={0}
+          value={nbQuittances ?? 0}
           icon={FileText}
           color="bg-violet-500"
         />
         <StatCard
           title="Loyers en retard"
-          value={0}
+          value={nbRelances ?? 0}
           icon={AlertCircle}
           color="bg-rose-500"
         />
       </div>
 
-      <div className="mt-10 bg-white rounded-xl border border-gray-100 p-8 text-center">
-        <Home className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-        <h2 className="text-gray-700 font-medium">Commencez par ajouter un bien</h2>
-        <p className="text-gray-400 text-sm mt-1">
-          Ajoutez votre premier bien pour commencer à gérer vos locations.
-        </p>
-        <a
-          href="/biens"
-          className="inline-block mt-4 bg-[#2A9FD6] hover:bg-[#238bbf] text-white text-sm font-medium px-5 py-2.5 rounded-lg transition-colors"
-        >
-          Ajouter un bien
-        </a>
-      </div>
+      {(nbBiens ?? 0) === 0 && (
+        <div className="mt-10 bg-white rounded-xl border border-gray-100 p-8 text-center">
+          <Home className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+          <h2 className="text-gray-700 font-medium">Commencez par ajouter un bien</h2>
+          <p className="text-gray-400 text-sm mt-1">
+            Ajoutez votre premier bien pour commencer à gérer vos locations.
+          </p>
+          <a
+            href="/biens"
+            className="inline-block mt-4 bg-[#2A9FD6] hover:bg-[#238bbf] text-white text-sm font-medium px-5 py-2.5 rounded-lg transition-colors"
+          >
+            Ajouter un bien
+          </a>
+        </div>
+      )}
     </div>
   );
 }

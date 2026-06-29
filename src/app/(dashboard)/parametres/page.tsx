@@ -1,36 +1,79 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
 import { User, CreditCard, Bell, Save } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type Plan = "Gratuit" | "Essentiel" | "Pro" | "Expert";
+type Plan = "gratuit" | "essentiel" | "pro" | "expert";
 
-const planColors: Record<Plan, string> = {
-  Gratuit: "bg-gray-100 text-gray-600",
-  Essentiel: "bg-blue-50 text-blue-700",
-  Pro: "bg-violet-50 text-violet-700",
-  Expert: "bg-amber-50 text-amber-700",
+const planLabels: Record<Plan, string> = {
+  gratuit: "Gratuit",
+  essentiel: "Essentiel",
+  pro: "Pro",
+  expert: "Expert",
 };
 
-const currentPlan: Plan = "Gratuit";
+const planColors: Record<Plan, string> = {
+  gratuit: "bg-gray-100 text-gray-600",
+  essentiel: "bg-blue-50 text-blue-700",
+  pro: "bg-violet-50 text-violet-700",
+  expert: "bg-amber-50 text-amber-700",
+};
 
 export default function ParametresPage() {
   const [prenom, setPrenom] = useState("");
   const [nom, setNom] = useState("");
   const [email, setEmail] = useState("");
   const [telephone, setTelephone] = useState("");
+  const [plan, setPlan] = useState<Plan>("gratuit");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const supabase = createClient();
+    async function load() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      setEmail(user.email ?? "");
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("prenom, nom, telephone, plan")
+        .eq("id", user.id)
+        .single();
+
+      if (profile) {
+        setPrenom(profile.prenom ?? "");
+        setNom(profile.nom ?? "");
+        setTelephone(profile.telephone ?? "");
+        setPlan((profile.plan as Plan) ?? "gratuit");
+      }
+      setLoading(false);
+    }
+    load();
+  }, []);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
-    await new Promise((r) => setTimeout(r, 800));
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      await supabase
+        .from("profiles")
+        .update({ prenom, nom, telephone })
+        .eq("id", user.id);
+    }
     setSaving(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };
+
+  if (loading) {
+    return <div className="text-gray-400 text-sm p-8">Chargement...</div>;
+  }
 
   return (
     <div>
@@ -49,9 +92,7 @@ export default function ParametresPage() {
           <form onSubmit={handleSave} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Prénom
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Prénom</label>
                 <input
                   type="text"
                   value={prenom}
@@ -61,9 +102,7 @@ export default function ParametresPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Nom
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Nom</label>
                 <input
                   type="text"
                   value={nom}
@@ -74,21 +113,16 @@ export default function ParametresPage() {
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Adresse e-mail
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Adresse e-mail</label>
               <input
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="vous@exemple.fr"
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2A9FD6] focus:border-transparent"
+                disabled
+                className="w-full px-3 py-2 border border-gray-100 rounded-lg text-sm bg-gray-50 text-gray-400 cursor-not-allowed"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Téléphone
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Téléphone</label>
               <input
                 type="tel"
                 value={telephone}
@@ -124,33 +158,26 @@ export default function ParametresPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-500">Plan actuel</p>
-              <div className="flex items-center gap-2 mt-1">
-                <span
-                  className={cn(
-                    "inline-block px-3 py-1 rounded-full text-sm font-semibold",
-                    planColors[currentPlan]
-                  )}
-                >
-                  {currentPlan}
-                </span>
-              </div>
+              <span className={cn("inline-block mt-1 px-3 py-1 rounded-full text-sm font-semibold", planColors[plan])}>
+                {planLabels[plan]}
+              </span>
             </div>
             <button className="text-sm font-medium text-[#2A9FD6] hover:text-[#238bbf] transition-colors">
               Changer de plan →
             </button>
           </div>
           <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2">
-            {(["Gratuit", "Essentiel", "Pro", "Expert"] as Plan[]).map((plan) => (
+            {(Object.entries(planLabels) as [Plan, string][]).map(([key, label]) => (
               <div
-                key={plan}
+                key={key}
                 className={cn(
                   "text-center py-2 px-3 rounded-lg text-xs font-medium border",
-                  plan === currentPlan
+                  key === plan
                     ? "border-[#2A9FD6] text-[#2A9FD6] bg-[#2A9FD6]/5"
                     : "border-gray-100 text-gray-400"
                 )}
               >
-                {plan}
+                {label}
               </div>
             ))}
           </div>
@@ -164,21 +191,9 @@ export default function ParametresPage() {
           </h2>
           <div className="space-y-4">
             {[
-              {
-                id: "quittances",
-                label: "Rappel de génération des quittances",
-                description: "Recevoir un rappel le 1er de chaque mois",
-              },
-              {
-                id: "retards",
-                label: "Alertes de retard de paiement",
-                description: "Être notifié quand un loyer est en retard",
-              },
-              {
-                id: "relances",
-                label: "Confirmations de relance",
-                description: "Recevoir une copie des relances envoyées",
-              },
+              { id: "quittances", label: "Rappel de génération des quittances", description: "Recevoir un rappel le 1er de chaque mois" },
+              { id: "retards", label: "Alertes de retard de paiement", description: "Être notifié quand un loyer est en retard" },
+              { id: "relances", label: "Confirmations de relance", description: "Recevoir une copie des relances envoyées" },
             ].map(({ id, label, description }) => (
               <div key={id} className="flex items-start justify-between gap-4">
                 <div>

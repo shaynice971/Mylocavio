@@ -1,7 +1,27 @@
-import { FileText, Plus, Filter } from "lucide-react";
+import { createClient } from "@/lib/supabase/server";
+import { FileText, Plus } from "lucide-react";
 
-export default function QuittancesPage() {
-  const quittances: never[] = [];
+const statutLabels: Record<string, { label: string; classes: string }> = {
+  generee: { label: "Générée", classes: "bg-blue-50 text-blue-600" },
+  envoyee: { label: "Envoyée", classes: "bg-amber-50 text-amber-600" },
+  payee: { label: "Payée", classes: "bg-emerald-50 text-emerald-600" },
+};
+
+function moisFr(dateStr: string) {
+  return new Date(dateStr).toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
+}
+
+export default async function QuittancesPage() {
+  const supabase = await createClient();
+
+  const { data: quittances } = await supabase
+    .from("quittances")
+    .select(`
+      id, mois, loyer, charges, total, statut,
+      biens ( adresse, ville ),
+      locataires ( prenom, nom )
+    `)
+    .order("mois", { ascending: false });
 
   return (
     <div>
@@ -16,25 +36,7 @@ export default function QuittancesPage() {
         </button>
       </div>
 
-      {/* Filters */}
-      <div className="flex gap-3 mb-6">
-        <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-500">
-          <Filter className="w-4 h-4" />
-          <select className="bg-transparent outline-none text-gray-700">
-            <option value="">Tous les biens</option>
-          </select>
-        </div>
-        <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-500">
-          <select className="bg-transparent outline-none text-gray-700">
-            <option value="">Tous les mois</option>
-            <option value="2025-06">Juin 2025</option>
-            <option value="2025-05">Mai 2025</option>
-            <option value="2025-04">Avril 2025</option>
-          </select>
-        </div>
-      </div>
-
-      {quittances.length === 0 ? (
+      {!quittances || quittances.length === 0 ? (
         <div className="bg-white rounded-xl border border-gray-100 p-12 text-center">
           <FileText className="w-12 h-12 text-gray-200 mx-auto mb-4" />
           <h2 className="text-gray-700 font-medium text-lg">Aucune quittance</h2>
@@ -56,9 +58,37 @@ export default function QuittancesPage() {
               </tr>
             </thead>
             <tbody>
-              {quittances.map((_, i) => (
-                <tr key={i} className="border-b border-gray-50" />
-              ))}
+              {quittances.map((q) => {
+                const s = statutLabels[q.statut] ?? statutLabels.generee;
+                const bien = Array.isArray(q.biens) ? q.biens[0] : q.biens;
+                const loc = Array.isArray(q.locataires) ? q.locataires[0] : q.locataires;
+                return (
+                  <tr key={q.id} className="border-b border-gray-50 hover:bg-gray-50">
+                    <td className="px-6 py-4 text-gray-900 font-medium">
+                      {bien?.adresse ?? "—"}
+                    </td>
+                    <td className="px-6 py-4 text-gray-700 capitalize">
+                      {moisFr(q.mois)}
+                    </td>
+                    <td className="px-6 py-4 text-gray-700">
+                      {loc ? `${loc.prenom} ${loc.nom}` : "—"}
+                    </td>
+                    <td className="px-6 py-4 text-gray-900 font-medium">
+                      {Number(q.total).toLocaleString("fr-FR")} €
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`inline-block px-2.5 py-1 rounded-full text-xs font-medium ${s.classes}`}>
+                        {s.label}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <button className="text-xs text-[#2A9FD6] hover:text-[#238bbf] font-medium">
+                        Télécharger
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
