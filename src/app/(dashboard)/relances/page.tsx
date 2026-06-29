@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
-import { Bell, Send } from "lucide-react";
+import { Bell } from "lucide-react";
 import { cn } from "@/lib/utils";
+import RelanceButton from "./RelanceButton";
 
 const statuts: Record<string, { label: string; classes: string }> = {
   en_retard: { label: "En retard", classes: "bg-rose-50 text-rose-600" },
@@ -75,11 +76,8 @@ export default async function RelancesPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      {r.statut !== "regle" && (
-                        <button className="inline-flex items-center gap-1.5 text-xs font-medium text-[#2A9FD6] hover:text-[#238bbf] transition-colors">
-                          <Send className="w-3.5 h-3.5" />
-                          Envoyer une relance
-                        </button>
+                      {r.statut !== "regle" && r.statut !== "relance" && (
+                        <RelanceButton relanceId={r.id} />
                       )}
                     </td>
                   </tr>
