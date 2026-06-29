@@ -80,9 +80,14 @@ export default async function QuittancesPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <button className="text-xs text-[#2A9FD6] hover:text-[#238bbf] font-medium">
+                      <a
+                        href={`/api/quittances/${q.id}/pdf`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-[#2A9FD6] hover:text-[#238bbf] font-medium"
+                      >
                         Télécharger
-                      </button>
+                      </a>
                     </td>
                   </tr>
                 );
