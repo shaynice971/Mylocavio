@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
-import { FileText, Plus } from "lucide-react";
+import { FileText } from "lucide-react";
+import GenererButton from "./GenererButton";
 
 const statutLabels: Record<string, { label: string; classes: string }> = {
   generee: { label: "Générée", classes: "bg-blue-50 text-blue-600" },
@@ -30,10 +31,7 @@ export default async function QuittancesPage() {
           <h1 className="text-2xl font-bold text-gray-900">Quittances</h1>
           <p className="text-gray-500 mt-1">Gérez et envoyez vos quittances de loyer.</p>
         </div>
-        <button className="flex items-center gap-2 bg-[#2A9FD6] hover:bg-[#238bbf] text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors">
-          <Plus className="w-4 h-4" />
-          Générer les quittances du mois
-        </button>
+        <GenererButton />
       </div>
 
       {!quittances || quittances.length === 0 ? (

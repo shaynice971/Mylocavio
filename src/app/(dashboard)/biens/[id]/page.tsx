@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
-import { ArrowLeft, Home, User, FileText, FolderOpen } from "lucide-react";
+import { ArrowLeft, Home, User, FileText, FolderOpen, Pencil, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type Tab = "informations" | "quittances" | "documents";
@@ -21,43 +22,101 @@ const typeLabels: Record<string, string> = {
   autre: "Autre",
 };
 
+const inputClass =
+  "w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2A9FD6] focus:border-transparent";
+const labelClass = "block text-sm font-medium text-gray-700 mb-1";
+
 export default function BienDetailPage({ params }: { params: { id: string } }) {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<Tab>("informations");
   const [bien, setBien] = useState<Record<string, unknown> | null>(null);
   const [locataire, setLocataire] = useState<Record<string, unknown> | null>(null);
   const [quittances, setQuittances] = useState<Record<string, unknown>[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  // Ajout locataire
+  const [showLocataireForm, setShowLocataireForm] = useState(false);
+  const [locForm, setLocForm] = useState({
+    prenom: "",
+    nom: "",
+    email: "",
+    telephone: "",
+    date_entree: "",
+  });
+  const [locLoading, setLocLoading] = useState(false);
+  const [locError, setLocError] = useState<string | null>(null);
+
+  async function loadData() {
     const supabase = createClient();
-    async function load() {
-      const { data: bienData } = await supabase
-        .from("biens")
+    const { data: bienData } = await supabase
+      .from("biens")
+      .select("*")
+      .eq("id", params.id)
+      .single();
+    setBien(bienData);
+
+    if (bienData) {
+      const { data: locData } = await supabase
+        .from("locataires")
         .select("*")
-        .eq("id", params.id)
-        .single();
-      setBien(bienData);
+        .eq("bien_id", params.id)
+        .eq("actif", true)
+        .maybeSingle();
+      setLocataire(locData);
 
-      if (bienData) {
-        const { data: locData } = await supabase
-          .from("locataires")
-          .select("*")
-          .eq("bien_id", params.id)
-          .eq("actif", true)
-          .maybeSingle();
-        setLocataire(locData);
-
-        const { data: qData } = await supabase
-          .from("quittances")
-          .select("*")
-          .eq("bien_id", params.id)
-          .order("mois", { ascending: false });
-        setQuittances(qData ?? []);
-      }
-      setLoading(false);
+      const { data: qData } = await supabase
+        .from("quittances")
+        .select("*")
+        .eq("bien_id", params.id)
+        .order("mois", { ascending: false });
+      setQuittances(qData ?? []);
     }
-    load();
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params.id]);
+
+  async function handleLocataireSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setLocLoading(true);
+    setLocError(null);
+
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      setLocError("Vous devez être connecté.");
+      setLocLoading(false);
+      return;
+    }
+
+    const { error } = await supabase.from("locataires").insert({
+      bien_id: params.id,
+      user_id: user.id,
+      prenom: locForm.prenom,
+      nom: locForm.nom,
+      email: locForm.email || null,
+      telephone: locForm.telephone || null,
+      date_entree: locForm.date_entree,
+      actif: true,
+    });
+
+    if (error) {
+      setLocError(error.message);
+      setLocLoading(false);
+      return;
+    }
+
+    setShowLocataireForm(false);
+    setLocForm({ prenom: "", nom: "", email: "", telephone: "", date_entree: "" });
+    setLocLoading(false);
+    router.refresh();
+    // Reload local data
+    await loadData();
+  }
 
   if (loading) {
     return <div className="text-gray-400 text-sm p-8">Chargement...</div>;
@@ -84,8 +143,19 @@ export default function BienDetailPage({ params }: { params: { id: string } }) {
           <ArrowLeft className="w-4 h-4" />
           Retour aux biens
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900">{String(bien.adresse)}</h1>
-        <p className="text-gray-500 text-sm mt-1">{String(bien.code_postal)} {String(bien.ville)}</p>
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">{String(bien.adresse)}</h1>
+            <p className="text-gray-500 text-sm mt-1">{String(bien.code_postal)} {String(bien.ville)}</p>
+          </div>
+          <Link
+            href={`/biens/${params.id}/modifier`}
+            className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 border border-gray-200 px-3 py-2 rounded-lg transition-colors"
+          >
+            <Pencil className="w-4 h-4" />
+            Modifier
+          </Link>
+        </div>
       </div>
 
       <div className="flex gap-1 border-b border-gray-200 mb-6">
@@ -150,7 +220,92 @@ export default function BienDetailPage({ params }: { params: { id: string } }) {
                 ))}
               </dl>
             ) : (
-              <p className="text-sm text-gray-400">Aucun locataire actif.</p>
+              <div>
+                <p className="text-sm text-gray-400 mb-4">Aucun locataire actif.</p>
+                {!showLocataireForm ? (
+                  <button
+                    onClick={() => setShowLocataireForm(true)}
+                    className="inline-flex items-center gap-1.5 text-sm font-medium text-[#2A9FD6] hover:text-[#238bbf] transition-colors"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Ajouter un locataire
+                  </button>
+                ) : (
+                  <form onSubmit={handleLocataireSubmit} className="space-y-3">
+                    {locError && (
+                      <div className="px-3 py-2 bg-rose-50 text-rose-600 text-xs rounded-lg">
+                        {locError}
+                      </div>
+                    )}
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className={labelClass}>Prénom *</label>
+                        <input
+                          type="text"
+                          required
+                          value={locForm.prenom}
+                          onChange={(e) => setLocForm((p) => ({ ...p, prenom: e.target.value }))}
+                          className={inputClass}
+                        />
+                      </div>
+                      <div>
+                        <label className={labelClass}>Nom *</label>
+                        <input
+                          type="text"
+                          required
+                          value={locForm.nom}
+                          onChange={(e) => setLocForm((p) => ({ ...p, nom: e.target.value }))}
+                          className={inputClass}
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className={labelClass}>Email</label>
+                      <input
+                        type="email"
+                        value={locForm.email}
+                        onChange={(e) => setLocForm((p) => ({ ...p, email: e.target.value }))}
+                        className={inputClass}
+                      />
+                    </div>
+                    <div>
+                      <label className={labelClass}>Téléphone</label>
+                      <input
+                        type="tel"
+                        value={locForm.telephone}
+                        onChange={(e) => setLocForm((p) => ({ ...p, telephone: e.target.value }))}
+                        className={inputClass}
+                      />
+                    </div>
+                    <div>
+                      <label className={labelClass}>Date d&apos;entrée *</label>
+                      <input
+                        type="date"
+                        required
+                        value={locForm.date_entree}
+                        onChange={(e) => setLocForm((p) => ({ ...p, date_entree: e.target.value }))}
+                        className={inputClass}
+                      />
+                    </div>
+                    <div className="flex items-center gap-3 pt-1">
+                      <button
+                        type="submit"
+                        disabled={locLoading}
+                        className="bg-[#2A9FD6] hover:bg-[#238bbf] disabled:opacity-60 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+                      >
+                        {locLoading ? "Enregistrement..." : "Ajouter"}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => { setShowLocataireForm(false); setLocError(null); }}
+                        className="text-sm text-gray-500 hover:text-gray-700"
+                      >
+                        Annuler
+                      </button>
+                    </div>
+                  </form>
+                )}
+              </div>
             )}
           </div>
         </div>
