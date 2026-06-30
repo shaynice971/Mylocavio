@@ -1,6 +1,8 @@
-import { FolderOpen, FileText, Download, Plus } from "lucide-react";
+import { Download, Plus } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
+import IconDocument from "@/components/icons/IconDocument";
+import IconFolder from "@/components/icons/IconFolder";
 
 interface DocumentCardProps {
   title: string;
@@ -9,17 +11,17 @@ interface DocumentCardProps {
 
 function DocumentCard({ title, description }: DocumentCardProps) {
   return (
-    <div className="bg-white border border-gray-100 rounded-xl p-5 flex items-start gap-4 hover:border-[#2A9FD6]/30 transition-colors group">
-      <div className="p-2.5 bg-[#2A9FD6]/10 rounded-lg shrink-0">
-        <FileText className="w-5 h-5 text-[#2A9FD6]" />
+    <div className="bg-white rounded-xl shadow-sm p-6 flex items-start gap-4 hover:shadow transition-shadow">
+      <div className="w-10 h-10 bg-[#2A9FD6]/10 rounded-lg flex items-center justify-center shrink-0">
+        <IconDocument className="w-5 h-5 text-[#2A9FD6]" />
       </div>
       <div className="flex-1 min-w-0">
-        <h3 className="font-medium text-gray-900 text-sm">{title}</h3>
+        <h3 className="font-medium text-[#1a1a1a] text-sm">{title}</h3>
         <p className="text-xs text-gray-500 mt-0.5">{description}</p>
       </div>
       <button
         className="shrink-0 p-1.5 text-gray-300 hover:text-[#2A9FD6] transition-colors"
-        aria-label="Télécharger"
+        aria-label="Telecharger"
       >
         <Download className="w-4 h-4" />
       </button>
@@ -33,22 +35,22 @@ const modeles = [
     description: "Modification ou ajout de clauses au bail existant",
   },
   {
-    title: "Congé bailleur",
-    description: "Lettre de congé délivré au locataire pour vente ou reprise",
+    title: "Conge bailleur",
+    description: "Lettre de conge delivre au locataire pour vente ou reprise",
   },
   {
-    title: "Congé locataire",
-    description: "Lettre de congé envoyée par le locataire au bailleur",
+    title: "Conge locataire",
+    description: "Lettre de conge envoyee par le locataire au bailleur",
   },
   {
-    title: "État des lieux",
-    description: "Modèle d'état des lieux d'entrée et de sortie",
+    title: "Etat des lieux",
+    description: "Modele d'etat des lieux d'entree et de sortie",
   },
 ];
 
 function typeBailLabel(type: string): string {
-  if (type === "meuble") return "Meublé";
-  if (type === "mobilite") return "Mobilité";
+  if (type === "meuble") return "Meuble";
+  if (type === "mobilite") return "Mobilite";
   return "Vide";
 }
 
@@ -87,45 +89,47 @@ export default async function DocumentsPage() {
     <div>
       <div className="mb-8 flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Baux &amp; Documents</h1>
+          <h1 className="text-2xl font-bold text-[#1a1a1a]">Baux &amp; Documents</h1>
           <p className="text-gray-500 mt-1">
-            Accédez à vos contrats de bail et modèles de documents juridiques.
+            Accedez a vos contrats de bail et modeles de documents juridiques.
           </p>
         </div>
         <Link
           href="/baux/nouveau"
-          className="inline-flex items-center gap-2 px-4 py-2 bg-[#2A9FD6] text-white text-sm font-medium rounded-lg hover:bg-[#2A9FD6]/90 transition-colors"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#2A9FD6] hover:bg-[#238bbf] text-white text-sm font-medium rounded-lg transition-colors"
         >
           <Plus className="w-4 h-4" />
-          Créer un nouveau bail
+          Creer un nouveau bail
         </Link>
       </div>
 
       {/* Baux en cours */}
       <section className="mb-8">
-        <h2 className="text-base font-semibold text-gray-800 mb-4 flex items-center gap-2">
-          <FolderOpen className="w-4 h-4 text-[#2A9FD6]" />
+        <h2 className="text-base font-semibold text-[#1a1a1a] mb-4 flex items-center gap-2">
+          <IconFolder className="w-4 h-4 text-[#2A9FD6]" />
           Baux en cours
         </h2>
 
         {baux.length === 0 ? (
-          <div className="bg-white rounded-xl border border-gray-100 p-8 text-center">
-            <FileText className="w-10 h-10 text-gray-200 mx-auto mb-3" />
-            <p className="text-gray-500 text-sm">Aucun bail actif pour le moment.</p>
+          <div className="bg-white rounded-xl shadow-sm p-10 text-center">
+            <div className="w-14 h-14 bg-[#2A9FD6]/10 rounded-xl flex items-center justify-center mx-auto mb-4">
+              <IconDocument className="w-7 h-7 text-[#2A9FD6]" />
+            </div>
+            <p className="text-gray-600 text-sm font-medium">Aucun bail actif pour le moment.</p>
             <p className="text-gray-400 text-xs mt-1">
-              Les baux apparaîtront ici une fois vos biens configurés.
+              Les baux apparaitront ici une fois vos biens configures.
             </p>
           </div>
         ) : (
-          <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+          <div className="bg-white rounded-xl shadow-sm overflow-hidden">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-100 text-xs text-gray-500 uppercase tracking-wide">
-                  <th className="text-left px-4 py-3 font-medium">Bien</th>
-                  <th className="text-left px-4 py-3 font-medium">Locataire</th>
-                  <th className="text-left px-4 py-3 font-medium">Type</th>
-                  <th className="text-left px-4 py-3 font-medium">Début</th>
-                  <th className="text-right px-4 py-3 font-medium">Contrat</th>
+                <tr className="bg-[#F7F9FC] border-b border-gray-100">
+                  <th className="text-left px-6 py-4 font-medium text-gray-500">Bien</th>
+                  <th className="text-left px-6 py-4 font-medium text-gray-500">Locataire</th>
+                  <th className="text-left px-6 py-4 font-medium text-gray-500">Type</th>
+                  <th className="text-left px-6 py-4 font-medium text-gray-500">Debut</th>
+                  <th className="text-right px-6 py-4 font-medium text-gray-500">Contrat</th>
                 </tr>
               </thead>
               <tbody>
@@ -140,32 +144,32 @@ export default async function DocumentsPage() {
                   return (
                     <tr
                       key={bail.id}
-                      className="border-b border-gray-50 last:border-0 hover:bg-gray-50/50 transition-colors"
+                      className="border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors"
                     >
-                      <td className="px-4 py-3 text-gray-900">
+                      <td className="px-6 py-4 text-[#1a1a1a] font-medium">
                         {bien ? `${bien.adresse}, ${bien.ville}` : "—"}
                       </td>
-                      <td className="px-4 py-3 text-gray-700">
+                      <td className="px-6 py-4 text-gray-600">
                         {locataire
                           ? `${locataire.prenom} ${locataire.nom}`
                           : "—"}
                       </td>
-                      <td className="px-4 py-3">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-[#2A9FD6]/10 text-[#2A9FD6]">
+                      <td className="px-6 py-4">
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#2A9FD6]/10 text-[#2A9FD6]">
                           {typeBailLabel(bail.type)}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-gray-600">
+                      <td className="px-6 py-4 text-gray-600">
                         {new Date(bail.date_debut).toLocaleDateString("fr-FR")}
                       </td>
-                      <td className="px-4 py-3 text-right">
+                      <td className="px-6 py-4 text-right">
                         <Link
                           href={`/api/baux/${bail.id}/pdf`}
-                          className="inline-flex items-center gap-1.5 text-[#2A9FD6] hover:text-[#2A9FD6]/80 font-medium text-xs transition-colors"
+                          className="inline-flex items-center gap-1.5 text-[#2A9FD6] hover:text-[#238bbf] font-medium text-xs transition-colors"
                           target="_blank"
                         >
                           <Download className="w-3.5 h-3.5" />
-                          Télécharger PDF
+                          Telecharger PDF
                         </Link>
                       </td>
                     </tr>
@@ -177,11 +181,11 @@ export default async function DocumentsPage() {
         )}
       </section>
 
-      {/* Modèles de documents */}
+      {/* Modeles de documents */}
       <section>
-        <h2 className="text-base font-semibold text-gray-800 mb-4 flex items-center gap-2">
-          <FileText className="w-4 h-4 text-[#2A9FD6]" />
-          Modèles de documents
+        <h2 className="text-base font-semibold text-[#1a1a1a] mb-4 flex items-center gap-2">
+          <IconDocument className="w-4 h-4 text-[#2A9FD6]" />
+          Modeles de documents
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
           {modeles.map((doc) => (

@@ -1,22 +1,26 @@
 import Link from "next/link";
+import Logo from "@/components/Logo";
+import IconDocument from "@/components/icons/IconDocument";
+import IconBell from "@/components/icons/IconBell";
+import IconCheck from "@/components/icons/IconCheck";
 
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-white font-sans">
       {/* Navbar */}
       <nav className="sticky top-0 z-50 bg-white border-b border-gray-100">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <span className="text-xl font-bold text-[#2A9FD6]">MyLocavio</span>
-          <div className="flex items-center gap-3">
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+          <Logo />
+          <div className="flex items-center gap-4">
             <Link
               href="/connexion"
-              className="text-sm font-medium text-gray-600 hover:text-[#2A9FD6] px-4 py-2 rounded-lg transition-colors"
+              className="text-sm font-medium text-gray-500 hover:text-[#1a1a1a] transition-colors"
             >
               Se connecter
             </Link>
             <Link
               href="/inscription"
-              className="text-sm font-medium bg-[#2A9FD6] hover:bg-[#238bbf] text-white px-4 py-2 rounded-lg transition-colors"
+              className="text-sm font-medium bg-[#2A9FD6] hover:bg-[#238bbf] text-white px-5 py-2 rounded-lg transition-colors"
             >
               Commencer gratuitement
             </Link>
@@ -25,84 +29,101 @@ export default function HomePage() {
       </nav>
 
       {/* Hero */}
-      <section className="bg-white py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 bg-blue-50 text-[#2A9FD6] text-sm font-medium px-4 py-1.5 rounded-full mb-8">
-            🏠 Gestion locative simplifiée
-          </div>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
-            Gérez vos locations<br />
-            <span className="text-[#2A9FD6]">sans prise de tête</span>
-          </h1>
-          <p className="text-lg text-gray-500 max-w-2xl mx-auto mb-10">
-            MyLocavio est l&apos;outil pensé pour les propriétaires bailleurs qui gèrent 1 à 5 logements seuls.
-            Quittances, baux, relances — tout en quelques clics.
+      <section className="py-24 bg-white text-center">
+        <div className="max-w-7xl mx-auto px-6">
+          <p className="uppercase tracking-widest text-[#2A9FD6] text-sm font-semibold mb-6">
+            Gestion locative simplifiee
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+          <h1 className="text-5xl font-bold leading-tight text-[#1a1a1a] max-w-3xl mx-auto">
+            Gerez vos locations<br />comme un pro
+          </h1>
+          <p className="text-xl text-gray-500 max-w-2xl mx-auto mt-6">
+            MyLocavio centralise tout ce dont vous avez besoin pour louer sereinement — quittances, baux, relances. Sans agence, sans Excel.
+          </p>
+          <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/inscription"
-              className="inline-flex items-center justify-center bg-[#2A9FD6] hover:bg-[#238bbf] text-white font-semibold px-8 py-4 rounded-xl text-base transition-colors"
+              className="inline-flex items-center justify-center bg-[#2A9FD6] hover:bg-[#238bbf] text-white font-semibold px-8 py-3 rounded-lg text-base transition-colors"
             >
-              Commencer gratuitement →
+              Commencer gratuitement
             </Link>
-            <button className="inline-flex items-center justify-center border border-gray-300 hover:border-[#2A9FD6] hover:text-[#2A9FD6] text-gray-700 font-semibold px-8 py-4 rounded-xl text-base transition-colors">
-              Voir une démo
+            <button className="inline-flex items-center justify-center border border-[#2A9FD6] text-[#2A9FD6] font-semibold px-8 py-3 rounded-lg text-base hover:bg-[#2A9FD6]/5 transition-colors">
+              Voir une demo
             </button>
           </div>
-          <p className="text-sm text-gray-400">
-            Rejoint par +200 propriétaires bailleurs · Aucune carte bancaire requise
+          <p className="mt-8 text-sm text-gray-400">
+            Deja +200 proprietaires · Gratuit pour commencer · Donnees hebergees en France
           </p>
         </div>
       </section>
 
       {/* Features */}
-      <section className="bg-[#F8FAFC] py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-14">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
-              Tout ce dont vous avez besoin
-            </h2>
+      <section className="py-20 bg-[#F7F9FC]">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-[#1a1a1a]">Tout ce dont vous avez besoin</h2>
+            <p className="mt-3 text-base text-gray-500">Une plateforme pensee pour les bailleurs independants</p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-white rounded-xl p-8 shadow-sm">
+              <div className="w-12 h-12 bg-[#2A9FD6]/10 rounded-xl flex items-center justify-center mb-6">
+                <IconDocument className="w-6 h-6 text-[#2A9FD6]" />
+              </div>
+              <h3 className="text-lg font-semibold text-[#1a1a1a] mb-3">Quittances PDF conformes</h3>
+              <p className="text-base text-gray-500 leading-relaxed">
+                Generees en un clic, conformes a la loi ALUR. Envoyez-les directement a votre locataire.
+              </p>
+            </div>
+            <div className="bg-white rounded-xl p-8 shadow-sm">
+              <div className="w-12 h-12 bg-[#2A9FD6]/10 rounded-xl flex items-center justify-center mb-6">
+                <IconDocument className="w-6 h-6 text-[#2A9FD6]" />
+              </div>
+              <h3 className="text-lg font-semibold text-[#1a1a1a] mb-3">Baux reglementaires</h3>
+              <p className="text-base text-gray-500 leading-relaxed">
+                Bail vide 3 ans, meuble 1 an, bail mobilite. Tous conformes, prets a signer.
+              </p>
+            </div>
+            <div className="bg-white rounded-xl p-8 shadow-sm">
+              <div className="w-12 h-12 bg-[#2A9FD6]/10 rounded-xl flex items-center justify-center mb-6">
+                <IconBell className="w-6 h-6 text-[#2A9FD6]" />
+              </div>
+              <h3 className="text-lg font-semibold text-[#1a1a1a] mb-3">Relances automatisees</h3>
+              <p className="text-base text-gray-500 leading-relaxed">
+                Suivez les impayes et envoyez des relances professionnelles depuis votre tableau de bord.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-[#1a1a1a]">Demarrez en 3 etapes</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             {[
               {
-                icon: "📄",
-                title: "Quittances automatiques",
-                desc: "Générez vos quittances PDF conformes loi ALUR en un clic",
+                n: "01",
+                title: "Creez votre compte",
+                desc: "Inscription en 2 minutes, aucune carte bancaire requise.",
               },
               {
-                icon: "📋",
-                title: "Baux conformes",
-                desc: "Bail vide 3 ans, meublé 1 an, mobilité — tous conformes et prêts à signer",
+                n: "02",
+                title: "Ajoutez vos biens",
+                desc: "Renseignez vos logements et vos locataires en quelques clics.",
               },
               {
-                icon: "🔔",
-                title: "Relances intelligentes",
-                desc: "Suivez les impayés et envoyez des relances depuis votre tableau de bord",
+                n: "03",
+                title: "Gerez au quotidien",
+                desc: "Quittances, baux, relances — tout depuis un seul endroit.",
               },
-              {
-                icon: "🏠",
-                title: "Multi-biens",
-                desc: "Gérez jusqu'à 5 logements depuis un seul espace",
-              },
-              {
-                icon: "📊",
-                title: "Tableau de bord",
-                desc: "Visualisez vos loyers, dépôts de garantie et revenus en temps réel",
-              },
-              {
-                icon: "🔒",
-                title: "Données sécurisées",
-                desc: "Vos données sont chiffrées et hébergées en Europe",
-              },
-            ].map((feature) => (
-              <div
-                key={feature.title}
-                className="bg-white rounded-2xl p-6 border border-gray-100 hover:shadow-sm transition-shadow"
-              >
-                <div className="text-3xl mb-4">{feature.icon}</div>
-                <h3 className="font-semibold text-gray-900 mb-2">{feature.title}</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">{feature.desc}</p>
+            ].map((step) => (
+              <div key={step.n} className="text-center">
+                <p className="text-5xl font-bold text-[#2A9FD6] opacity-20 mb-4">{step.n}</p>
+                <h3 className="text-lg font-semibold text-[#1a1a1a] mb-2">{step.title}</h3>
+                <p className="text-base text-gray-500">{step.desc}</p>
               </div>
             ))}
           </div>
@@ -110,94 +131,81 @@ export default function HomePage() {
       </section>
 
       {/* Pricing */}
-      <section className="bg-white py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-4">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
-              Des tarifs clairs, sans surprise
-            </h2>
+      <section className="py-20 bg-[#F7F9FC]">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-[#1a1a1a]">Des tarifs transparents</h2>
           </div>
-          <p className="text-center text-gray-500 mb-14">
-            Commencez gratuitement, évoluez selon vos besoins
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {/* Starter */}
-            <div className="border border-gray-200 rounded-2xl p-8">
-              <h3 className="font-bold text-gray-900 text-lg mb-1">Starter</h3>
-              <p className="text-sm text-gray-500 mb-4">Pour débuter</p>
-              <div className="text-4xl font-bold text-gray-900 mb-6">
-                0€<span className="text-base font-normal text-gray-500">/mois</span>
-              </div>
-              <ul className="space-y-3 mb-8">
-                {["1 bien", "Quittances PDF", "Tableau de bord"].map((f) => (
+            <div className="bg-white rounded-xl p-8 shadow-sm">
+              <h3 className="text-lg font-bold text-[#1a1a1a]">Starter</h3>
+              <p className="text-sm text-gray-500 mt-1">Pour commencer</p>
+              <p className="mt-6 text-4xl font-bold text-[#1a1a1a]">
+                0<span className="text-base font-normal text-gray-500">&euro;/mois</span>
+              </p>
+              <ul className="mt-8 space-y-3">
+                {["1 bien", "Quittances PDF", "Tableau de bord", "Support communautaire"].map((f) => (
                   <li key={f} className="flex items-center gap-2 text-sm text-gray-600">
-                    <span className="text-[#2A9FD6]">✓</span> {f}
+                    <IconCheck className="w-4 h-4 text-[#2A9FD6] shrink-0" />
+                    {f}
                   </li>
                 ))}
               </ul>
               <Link
                 href="/inscription"
-                className="block text-center border border-gray-300 hover:border-[#2A9FD6] hover:text-[#2A9FD6] text-gray-700 font-medium py-3 rounded-xl text-sm transition-colors"
+                className="mt-8 block text-center border border-[#2A9FD6] text-[#2A9FD6] font-medium py-2.5 rounded-lg text-sm hover:bg-[#2A9FD6]/5 transition-colors"
               >
                 Commencer gratuitement
               </Link>
             </div>
 
-            {/* Pro — highlighted */}
-            <div className="border-2 border-[#2A9FD6] rounded-2xl p-8 relative">
+            {/* Pro */}
+            <div className="bg-white rounded-xl p-8 shadow-sm border-2 border-[#2A9FD6] relative">
               <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                <span className="bg-[#2A9FD6] text-white text-xs font-semibold px-4 py-1.5 rounded-full">
-                  ★ Le plus populaire
+                <span className="bg-[#2A9FD6] text-white text-xs font-semibold px-3 py-1 rounded-full">
+                  Le plus populaire
                 </span>
               </div>
-              <h3 className="font-bold text-gray-900 text-lg mb-1">Pro</h3>
-              <p className="text-sm text-gray-500 mb-4">Pour les propriétaires actifs</p>
-              <div className="text-4xl font-bold text-gray-900 mb-6">
-                9€<span className="text-base font-normal text-gray-500">/mois</span>
-              </div>
-              <ul className="space-y-3 mb-8">
-                {[
-                  "3 biens",
-                  "Tout Starter +",
-                  "Baux PDF conformes",
-                  "Relances loyers",
-                  "Révision IRL",
-                ].map((f) => (
+              <h3 className="text-lg font-bold text-[#1a1a1a]">Pro</h3>
+              <p className="text-sm text-gray-500 mt-1">Pour les proprietaires actifs</p>
+              <p className="mt-6 text-4xl font-bold text-[#1a1a1a]">
+                9<span className="text-base font-normal text-gray-500">&euro;/mois</span>
+              </p>
+              <ul className="mt-8 space-y-3">
+                {["3 biens", "Tout Starter +", "Baux PDF", "Relances", "Revision IRL annuelle"].map((f) => (
                   <li key={f} className="flex items-center gap-2 text-sm text-gray-600">
-                    <span className="text-[#2A9FD6]">✓</span> {f}
+                    <IconCheck className="w-4 h-4 text-[#2A9FD6] shrink-0" />
+                    {f}
                   </li>
                 ))}
               </ul>
               <Link
                 href="/inscription"
-                className="block text-center bg-[#2A9FD6] hover:bg-[#238bbf] text-white font-medium py-3 rounded-xl text-sm transition-colors"
+                className="mt-8 block text-center bg-[#2A9FD6] hover:bg-[#238bbf] text-white font-medium py-2.5 rounded-lg text-sm transition-colors"
               >
                 Commencer avec Pro
               </Link>
             </div>
 
             {/* Expert */}
-            <div className="border border-gray-200 rounded-2xl p-8">
-              <h3 className="font-bold text-gray-900 text-lg mb-1">Expert</h3>
-              <p className="text-sm text-gray-500 mb-4">Pour les multi-propriétaires</p>
-              <div className="text-4xl font-bold text-gray-900 mb-6">
-                19€<span className="text-base font-normal text-gray-500">/mois</span>
-              </div>
-              <ul className="space-y-3 mb-8">
-                {[
-                  "5 biens",
-                  "Tout Pro +",
-                  "Documents (avenants, congés, EDL)",
-                  "Support prioritaire",
-                ].map((f) => (
+            <div className="bg-white rounded-xl p-8 shadow-sm">
+              <h3 className="text-lg font-bold text-[#1a1a1a]">Expert</h3>
+              <p className="text-sm text-gray-500 mt-1">Pour les multi-proprietaires</p>
+              <p className="mt-6 text-4xl font-bold text-[#1a1a1a]">
+                19<span className="text-base font-normal text-gray-500">&euro;/mois</span>
+              </p>
+              <ul className="mt-8 space-y-3">
+                {["5 biens", "Tout Pro +", "Documents complets", "Support prioritaire"].map((f) => (
                   <li key={f} className="flex items-center gap-2 text-sm text-gray-600">
-                    <span className="text-[#2A9FD6]">✓</span> {f}
+                    <IconCheck className="w-4 h-4 text-[#2A9FD6] shrink-0" />
+                    {f}
                   </li>
                 ))}
               </ul>
               <Link
                 href="/inscription"
-                className="block text-center border border-gray-300 hover:border-[#2A9FD6] hover:text-[#2A9FD6] text-gray-700 font-medium py-3 rounded-xl text-sm transition-colors"
+                className="mt-8 block text-center border border-[#2A9FD6] text-[#2A9FD6] font-medium py-2.5 rounded-lg text-sm hover:bg-[#2A9FD6]/5 transition-colors"
               >
                 Commencer avec Expert
               </Link>
@@ -207,39 +215,47 @@ export default function HomePage() {
       </section>
 
       {/* Testimonials */}
-      <section className="bg-[#F8FAFC] py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-14">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
-              Ils nous font confiance
-            </h2>
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-[#1a1a1a]">Ils simplifient leur gestion</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               {
+                initials: "MD",
                 name: "Marie D.",
-                role: "Propriétaire, Lyon",
+                role: "Proprietaire a Lyon",
                 quote:
-                  "J'ai gagné des heures chaque mois. Les quittances se génèrent toutes seules, les baux sont conformes. Je recommande à tous les propriétaires !",
+                  "J'ai economise des heures chaque mois. Les quittances se generent seules, les baux sont conformes. Je recommande a tous les bailleurs independants.",
               },
               {
+                initials: "TR",
                 name: "Thomas R.",
-                role: "Bailleur, Paris",
+                role: "Bailleur a Paris",
                 quote:
-                  "Enfin un outil simple pour gérer mes 3 appartements. Fini les tablettes Excel et les modèles Word bricolés.",
+                  "Fini les tablettes Excel et les modeles Word bricoles. Tout est centralise, professionnel, et ca prend 5 minutes.",
               },
               {
+                initials: "SM",
                 name: "Sophie M.",
-                role: "Propriétaire, Bordeaux",
+                role: "Proprietaire a Bordeaux",
                 quote:
-                  "La gestion des relances m'a sauvé la mise. En 2 clics, mon locataire reçoit un rappel professionnel.",
+                  "La gestion des relances m'a sauve la mise. Mon locataire recoit un rappel professionnel en deux clics.",
               },
             ].map((t) => (
-              <div key={t.name} className="bg-white rounded-2xl p-6 border border-gray-100">
-                <p className="text-gray-600 text-sm leading-relaxed mb-6">&ldquo;{t.quote}&rdquo;</p>
-                <div>
-                  <p className="font-semibold text-gray-900 text-sm">{t.name}</p>
-                  <p className="text-xs text-gray-400">{t.role}</p>
+              <div key={t.name} className="bg-[#F7F9FC] rounded-xl p-8">
+                <p className="italic text-gray-600 text-base leading-relaxed">
+                  &ldquo;{t.quote}&rdquo;
+                </p>
+                <div className="mt-6 flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-[#2A9FD6] flex items-center justify-center text-white font-bold text-sm shrink-0">
+                    {t.initials}
+                  </div>
+                  <div>
+                    <p className="font-bold text-[#1a1a1a] text-sm">{t.name}</p>
+                    <p className="text-gray-400 text-xs">{t.role}</p>
+                  </div>
                 </div>
               </div>
             ))}
@@ -248,27 +264,27 @@ export default function HomePage() {
       </section>
 
       {/* CTA Final */}
-      <section className="bg-[#2A9FD6] py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-            Prêt à simplifier votre gestion locative ?
+      <section className="py-20 bg-[#2A9FD6]">
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          <h2 className="text-3xl font-bold text-white">
+            Pret a gerer vos locations sereinement ?
           </h2>
-          <p className="text-blue-100 mb-10 text-lg">
-            Rejoignez +200 propriétaires qui font confiance à MyLocavio
+          <p className="mt-4 text-white/80 text-base">
+            Rejoignez +200 proprietaires qui font confiance a MyLocavio
           </p>
           <Link
             href="/inscription"
-            className="inline-flex items-center justify-center bg-white hover:bg-gray-50 text-[#2A9FD6] font-semibold px-8 py-4 rounded-xl text-base transition-colors"
+            className="mt-8 inline-flex items-center justify-center bg-white text-[#2A9FD6] font-semibold px-8 py-3 rounded-lg text-base hover:bg-gray-50 transition-colors"
           >
-            Créer mon compte gratuit
+            Creer mon compte gratuit
           </Link>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-[#1a1a2e] py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
-          <span className="text-xl font-bold text-white">MyLocavio</span>
+      <footer className="bg-[#1a1a1a] text-white py-12">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
+          <span className="text-xl font-bold text-white">mylocavio</span>
           <div className="flex items-center gap-6 text-sm text-gray-400">
             <Link href="/connexion" className="hover:text-white transition-colors">
               Connexion
@@ -280,8 +296,8 @@ export default function HomePage() {
               Contact
             </a>
           </div>
-          <p className="text-sm text-gray-500">
-            © 2026 MyLocavio · Tous droits réservés
+          <p className="text-sm text-gray-400">
+            &copy; 2026 MyLocavio · Tous droits reserves
           </p>
         </div>
       </footer>
