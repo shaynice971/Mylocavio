@@ -35,8 +35,10 @@ export async function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
-  const publicPaths = ["/connexion", "/inscription"];
-  const isPublicPath = publicPaths.some((p) => pathname.startsWith(p));
+  const publicPaths = ["/connexion", "/inscription", "/mot-de-passe-oublie", "/reinitialiser-mot-de-passe"];
+  const isPublicPath =
+    pathname === "/" ||
+    publicPaths.filter((p) => p !== "/").some((p) => pathname.startsWith(p));
 
   if (!user && !isPublicPath) {
     const url = request.nextUrl.clone();
