@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
-import { ArrowLeft, Home, User, FileText, FolderOpen, Pencil, Plus } from "lucide-react";
+import { ArrowLeft, Home, User, FileText, FolderOpen, Pencil, Plus, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type Tab = "informations" | "quittances" | "documents";
@@ -307,6 +307,26 @@ export default function BienDetailPage({ params }: { params: { id: string } }) {
                 )}
               </div>
             )}
+          </div>
+          {/* IRL card */}
+          <div className="lg:col-span-2">
+            <Link
+              href={`/biens/${params.id}/revision-irl`}
+              className="bg-white rounded-xl border border-gray-100 p-5 flex items-center justify-between hover:shadow-sm transition-shadow group"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 bg-[#2A9FD6]/10 rounded-lg flex items-center justify-center shrink-0">
+                  <TrendingUp className="w-5 h-5 text-[#2A9FD6]" />
+                </div>
+                <div>
+                  <p className="font-medium text-sm text-[#1a1a1a]">Révision annuelle du loyer (IRL)</p>
+                  <p className="text-xs text-gray-500 mt-0.5">Recalculez le loyer selon l&apos;indice INSEE</p>
+                </div>
+              </div>
+              <span className="text-sm font-medium text-[#2A9FD6] group-hover:text-[#238bbf] transition-colors">
+                Calculer →
+              </span>
+            </Link>
           </div>
         </div>
       )}
