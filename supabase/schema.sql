@@ -160,3 +160,23 @@ drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function public.handle_new_user();
+
+-- ============================================================
+-- À exécuter dans Supabase SQL Editor pour activer les états des lieux
+-- ============================================================
+
+create table if not exists public.etats_des_lieux (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references public.profiles(id) on delete cascade not null,
+  bien_id uuid references public.biens(id) on delete cascade not null,
+  locataire_id uuid references public.locataires(id) on delete set null,
+  type text not null check (type in ('entree', 'sortie')),
+  date_etat date not null default current_date,
+  pieces jsonb default '[]',
+  observations text,
+  created_at timestamptz default now()
+);
+
+alter table public.etats_des_lieux enable row level security;
+create policy "etats_des_lieux: own data" on public.etats_des_lieux
+  for all using (auth.uid() = user_id);

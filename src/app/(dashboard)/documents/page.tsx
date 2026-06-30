@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import IconDocument from "@/components/icons/IconDocument";
 import IconFolder from "@/components/icons/IconFolder";
+import IconClipboard from "@/components/icons/IconClipboard";
 
 interface DocumentCardProps {
   title: string;
@@ -41,10 +42,6 @@ const modeles = [
   {
     title: "Conge locataire",
     description: "Lettre de conge envoyee par le locataire au bailleur",
-  },
-  {
-    title: "Etat des lieux",
-    description: "Modele d'etat des lieux d'entree et de sortie",
   },
 ];
 
@@ -191,6 +188,17 @@ export default async function DocumentsPage() {
           {modeles.map((doc) => (
             <DocumentCard key={doc.title} {...doc} />
           ))}
+          <Link href="/etats-des-lieux/nouveau" className="block">
+            <div className="bg-white rounded-xl shadow-sm p-6 flex items-start gap-4 hover:shadow transition-shadow h-full">
+              <div className="w-10 h-10 bg-[#2A9FD6]/10 rounded-lg flex items-center justify-center shrink-0">
+                <IconClipboard className="w-5 h-5 text-[#2A9FD6]" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="font-medium text-[#1a1a1a] text-sm">État des lieux</h3>
+                <p className="text-xs text-gray-500 mt-0.5">Créer un état des lieux d&apos;entrée ou de sortie</p>
+              </div>
+            </div>
+          </Link>
         </div>
       </section>
     </div>

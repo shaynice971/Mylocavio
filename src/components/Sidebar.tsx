@@ -11,12 +11,14 @@ import IconBell from "@/components/icons/IconBell";
 import IconSettings from "@/components/icons/IconSettings";
 import IconFolder from "@/components/icons/IconFolder";
 import IconChart from "@/components/icons/IconChart";
+import IconClipboard from "@/components/icons/IconClipboard";
 
 const navLinks = [
   { href: "/dashboard", label: "Dashboard", icon: IconChart },
   { href: "/biens", label: "Mes biens", icon: IconHome },
   { href: "/quittances", label: "Quittances", icon: IconDocument },
   { href: "/documents", label: "Baux & Documents", icon: IconFolder },
+  { href: "/etats-des-lieux", label: "États des lieux", icon: IconClipboard },
   { href: "/relances", label: "Relances", icon: IconBell },
 ];
 
