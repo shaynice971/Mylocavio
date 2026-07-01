@@ -116,12 +116,15 @@ export default async function DocumentsPage() {
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
           {modeles.map((doc) => (
-            <div key={doc.title} className="border border-gray-200 bg-white hover:bg-gray-50 hover:border-gray-300 shadow-sm rounded-xl p-5 flex items-start gap-3 transition-all">
-              <div className="w-9 h-9 rounded-lg bg-[#2A9FD6]/15 flex items-center justify-center shrink-0">
-                <FileText className="w-4 h-4 text-[#1c7aa8]" />
+            <div key={doc.title} className="border border-gray-200 bg-white shadow-sm rounded-xl p-5 flex items-start gap-3">
+              <div className="w-9 h-9 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
+                <FileText className="w-4 h-4 text-gray-400" />
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-gray-900 text-sm">{doc.title}</h3>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-semibold text-gray-500 text-sm">{doc.title}</h3>
+                  <span className="text-[10px] font-semibold text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">Bientôt</span>
+                </div>
                 <p className="text-gray-400 text-xs mt-0.5">{doc.description}</p>
               </div>
             </div>
