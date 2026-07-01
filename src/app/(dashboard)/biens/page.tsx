@@ -1,34 +1,30 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { Plus, Home, ChevronRight } from "lucide-react";
+import { Plus, ChevronRight, Home } from "lucide-react";
 
-const statutLabels: Record<string, { label: string; classes: string }> = {
-  loue: { label: "Loué", classes: "bg-emerald-50 text-emerald-600" },
-  vacant: { label: "Vacant", classes: "bg-amber-50 text-amber-600" },
-  travaux: { label: "Travaux", classes: "bg-gray-100 text-gray-500" },
+const statutConfig: Record<string, { label: string; classes: string }> = {
+  loue: { label: "Loué", classes: "bg-emerald-500/15 text-emerald-400 border-emerald-500/20" },
+  vacant: { label: "Vacant", classes: "bg-amber-500/15 text-amber-400 border-amber-500/20" },
+  travaux: { label: "Travaux", classes: "bg-white/8 text-white/40 border-white/10" },
 };
 
 export default async function BiensPage() {
   const supabase = await createClient();
-
   const { data: biens } = await supabase
     .from("biens")
-    .select(`
-      id, adresse, ville, code_postal, type, loyer, charges, statut,
-      locataires ( id, prenom, nom, actif )
-    `)
+    .select(`id, adresse, ville, code_postal, type, loyer, charges, statut, locataires ( id, prenom, nom, actif )`)
     .order("created_at", { ascending: false });
 
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Mes biens</h1>
-          <p className="text-gray-500 mt-1">Gérez vos propriétés en location.</p>
+          <h1 className="text-2xl font-black text-white">Mes biens</h1>
+          <p className="text-white/40 mt-1 text-sm">Gérez vos propriétés en location.</p>
         </div>
         <Link
           href="/biens/nouveau"
-          className="flex items-center gap-2 bg-[#2A9FD6] hover:bg-[#238bbf] text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors"
+          className="inline-flex items-center gap-2 bg-[#2A9FD6] hover:bg-[#238bbf] text-white text-sm font-bold px-4 py-2.5 rounded-xl transition-all hover:shadow-lg hover:shadow-[#2A9FD6]/25"
         >
           <Plus className="w-4 h-4" />
           Ajouter un bien
@@ -36,30 +32,32 @@ export default async function BiensPage() {
       </div>
 
       {!biens || biens.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-100 p-12 text-center">
-          <Home className="w-12 h-12 text-gray-200 mx-auto mb-4" />
-          <h2 className="text-gray-700 font-medium text-lg">Aucun bien enregistré</h2>
-          <p className="text-gray-400 text-sm mt-1 max-w-xs mx-auto">
+        <div className="border border-white/8 bg-white/3 rounded-2xl p-16 text-center">
+          <div className="w-14 h-14 rounded-2xl bg-[#2A9FD6]/15 flex items-center justify-center mx-auto mb-5">
+            <Home className="w-7 h-7 text-[#2A9FD6]" />
+          </div>
+          <h2 className="text-white font-bold text-lg">Aucun bien enregistré</h2>
+          <p className="text-white/35 text-sm mt-2 max-w-xs mx-auto">
             Ajoutez votre premier bien pour commencer à suivre vos locations et générer vos quittances.
           </p>
           <Link
             href="/biens/nouveau"
-            className="mt-5 inline-flex items-center gap-2 bg-[#2A9FD6] hover:bg-[#238bbf] text-white text-sm font-medium px-5 py-2.5 rounded-lg transition-colors"
+            className="inline-flex items-center gap-2 mt-8 bg-[#2A9FD6] hover:bg-[#238bbf] text-white text-sm font-bold px-5 py-2.5 rounded-xl transition-all"
           >
             <Plus className="w-4 h-4" />
             Ajouter un bien
           </Link>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+        <div className="border border-white/8 rounded-2xl overflow-hidden">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-gray-100 bg-gray-50">
-                <th className="text-left px-6 py-3 font-medium text-gray-500">Adresse</th>
-                <th className="text-left px-6 py-3 font-medium text-gray-500">Loyer CC</th>
-                <th className="text-left px-6 py-3 font-medium text-gray-500">Locataire</th>
-                <th className="text-left px-6 py-3 font-medium text-gray-500">Statut</th>
-                <th className="px-6 py-3" />
+              <tr className="border-b border-white/5 bg-white/3">
+                <th className="text-left px-6 py-4 font-semibold text-white/30 text-xs tracking-wide uppercase">Adresse</th>
+                <th className="text-left px-6 py-4 font-semibold text-white/30 text-xs tracking-wide uppercase">Loyer CC</th>
+                <th className="text-left px-6 py-4 font-semibold text-white/30 text-xs tracking-wide uppercase">Locataire</th>
+                <th className="text-left px-6 py-4 font-semibold text-white/30 text-xs tracking-wide uppercase">Statut</th>
+                <th className="w-16" />
               </tr>
             </thead>
             <tbody>
@@ -68,28 +66,28 @@ export default async function BiensPage() {
                   ? bien.locataires.filter((l) => l.actif)
                   : [];
                 const locataire = locatairesActifs[0];
-                const s = statutLabels[bien.statut] ?? statutLabels.vacant;
+                const s = statutConfig[bien.statut] ?? statutConfig.vacant;
                 return (
-                  <tr key={bien.id} className="border-b border-gray-50 hover:bg-gray-50">
+                  <tr key={bien.id} className="border-b border-white/5 hover:bg-white/3 transition-colors">
                     <td className="px-6 py-4">
-                      <p className="font-medium text-gray-900">{bien.adresse}</p>
-                      <p className="text-gray-400 text-xs mt-0.5">{bien.code_postal} {bien.ville}</p>
+                      <p className="font-semibold text-white">{bien.adresse}</p>
+                      <p className="text-white/30 text-xs mt-0.5">{bien.code_postal} {bien.ville}</p>
                     </td>
-                    <td className="px-6 py-4 text-gray-900">
+                    <td className="px-6 py-4 font-bold text-white">
                       {(Number(bien.loyer) + Number(bien.charges ?? 0)).toLocaleString("fr-FR")} €
                     </td>
-                    <td className="px-6 py-4 text-gray-700">
-                      {locataire ? `${locataire.prenom} ${locataire.nom}` : <span className="text-gray-400">—</span>}
+                    <td className="px-6 py-4 text-white/50 text-sm">
+                      {locataire ? `${locataire.prenom} ${locataire.nom}` : <span className="text-white/20">Aucun locataire</span>}
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`inline-block px-2.5 py-1 rounded-full text-xs font-medium ${s.classes}`}>
+                      <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold border ${s.classes}`}>
                         {s.label}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
                       <Link
                         href={`/biens/${bien.id}`}
-                        className="inline-flex items-center gap-1 text-xs text-[#2A9FD6] hover:text-[#238bbf] font-medium"
+                        className="inline-flex items-center gap-1 text-xs text-[#2A9FD6] hover:text-[#5bb8e8] font-semibold transition-colors"
                       >
                         Voir <ChevronRight className="w-3.5 h-3.5" />
                       </Link>

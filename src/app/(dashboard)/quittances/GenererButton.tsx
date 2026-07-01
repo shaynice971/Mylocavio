@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { genererQuittancesDuMois } from "@/app/actions/quittances";
-import { Plus } from "lucide-react";
+import { Plus, CheckCircle } from "lucide-react";
 
 export default function GenererButton() {
   const router = useRouter();
@@ -29,14 +29,15 @@ export default function GenererButton() {
   return (
     <div className="flex items-center gap-3">
       {feedback && (
-        <span className="text-sm text-gray-600 bg-gray-100 px-3 py-1.5 rounded-lg">
+        <span className="inline-flex items-center gap-1.5 text-sm text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-xl">
+          <CheckCircle className="w-3.5 h-3.5" />
           {feedback}
         </span>
       )}
       <button
         onClick={handleClick}
         disabled={isPending}
-        className="flex items-center gap-2 bg-[#2A9FD6] hover:bg-[#238bbf] disabled:opacity-60 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors"
+        className="inline-flex items-center gap-2 bg-[#2A9FD6] hover:bg-[#238bbf] disabled:opacity-60 text-white text-sm font-bold px-4 py-2.5 rounded-xl transition-all hover:shadow-lg hover:shadow-[#2A9FD6]/25"
       >
         <Plus className="w-4 h-4" />
         {isPending ? "Génération..." : "Générer les quittances du mois"}

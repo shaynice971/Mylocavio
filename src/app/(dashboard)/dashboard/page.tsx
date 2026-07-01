@@ -1,22 +1,28 @@
 import { createClient } from "@/lib/supabase/server";
-import { Home, FileText, TrendingUp, AlertCircle } from "lucide-react";
+import Link from "next/link";
+import { Home, TrendingUp, FileText, Bell, Plus, ArrowRight } from "lucide-react";
 
 interface StatCardProps {
   title: string;
   value: string | number;
   icon: React.ComponentType<{ className?: string }>;
   color: string;
+  iconBg: string;
+  trend?: string;
 }
 
-function StatCard({ title, value, icon: Icon, color }: StatCardProps) {
+function StatCard({ title, value, icon: Icon, color, iconBg, trend }: StatCardProps) {
   return (
-    <div className="bg-white rounded-xl border border-gray-100 p-6 flex items-center gap-4">
-      <div className={`p-3 rounded-lg ${color}`}>
-        <Icon className="w-5 h-5 text-white" />
-      </div>
-      <div>
-        <p className="text-sm text-gray-500">{title}</p>
-        <p className="text-2xl font-bold text-gray-900 mt-0.5">{value}</p>
+    <div className="border border-white/8 bg-white/3 hover:bg-white/5 hover:border-white/15 rounded-2xl p-6 transition-all">
+      <div className="flex items-start justify-between">
+        <div>
+          <p className="text-white/40 text-sm font-medium">{title}</p>
+          <p className={`text-3xl font-black mt-2 ${color}`}>{value}</p>
+          {trend && <p className="text-white/25 text-xs mt-1">{trend}</p>}
+        </div>
+        <div className={`w-11 h-11 rounded-xl ${iconBg} flex items-center justify-center shrink-0`}>
+          <Icon className={`w-5 h-5 ${color}`} />
+        </div>
       </div>
     </div>
   );
@@ -24,9 +30,7 @@ function StatCard({ title, value, icon: Icon, color }: StatCardProps) {
 
 export default async function DashboardPage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
 
   const prenom =
     (user?.user_metadata?.prenom as string | undefined) ??
@@ -42,10 +46,7 @@ export default async function DashboardPage() {
     supabase.from("biens").select("*", { count: "exact", head: true }),
     supabase.from("biens").select("loyer, charges").eq("statut", "loue"),
     supabase.from("quittances").select("*", { count: "exact", head: true }),
-    supabase
-      .from("relances")
-      .select("*", { count: "exact", head: true })
-      .eq("statut", "en_retard"),
+    supabase.from("relances").select("*", { count: "exact", head: true }).eq("statut", "en_retard"),
   ]);
 
   const totalLoyers = (biensLoyes ?? []).reduce(
@@ -53,57 +54,88 @@ export default async function DashboardPage() {
     0
   );
 
+  const moisActuel = new Date().toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
+
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">
-          Bonjour, {prenom} 👋
+        <h1 className="text-2xl font-black text-white">
+          Bonjour, <span className="text-[#2A9FD6]">{prenom}</span>
         </h1>
-        <p className="text-gray-500 mt-1">
-          Voici un aperçu de votre activité locative.
-        </p>
+        <p className="text-white/40 mt-1 text-sm capitalize">{moisActuel}</p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
         <StatCard
-          title="Nombre de biens"
+          title="Biens gérés"
           value={nbBiens ?? 0}
           icon={Home}
-          color="bg-[#2A9FD6]"
+          color="text-[#2A9FD6]"
+          iconBg="bg-[#2A9FD6]/15"
         />
         <StatCard
           title="Loyers du mois"
           value={`${totalLoyers.toLocaleString("fr-FR")} €`}
           icon={TrendingUp}
-          color="bg-emerald-500"
+          color="text-emerald-400"
+          iconBg="bg-emerald-500/15"
+          trend="Biens loués uniquement"
         />
         <StatCard
           title="Quittances générées"
           value={nbQuittances ?? 0}
           icon={FileText}
-          color="bg-violet-500"
+          color="text-violet-400"
+          iconBg="bg-violet-500/15"
         />
         <StatCard
           title="Loyers en retard"
           value={nbRelances ?? 0}
-          icon={AlertCircle}
-          color="bg-rose-500"
+          icon={Bell}
+          color={nbRelances ? "text-rose-400" : "text-white/20"}
+          iconBg={nbRelances ? "bg-rose-500/15" : "bg-white/5"}
         />
       </div>
 
-      {(nbBiens ?? 0) === 0 && (
-        <div className="mt-10 bg-white rounded-xl border border-gray-100 p-8 text-center">
-          <Home className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-          <h2 className="text-gray-700 font-medium">Commencez par ajouter un bien</h2>
-          <p className="text-gray-400 text-sm mt-1">
-            Ajoutez votre premier bien pour commencer à gérer vos locations.
+      {(nbBiens ?? 0) === 0 ? (
+        <div className="border border-white/8 bg-white/3 rounded-2xl p-16 text-center">
+          <div className="w-16 h-16 rounded-2xl bg-[#2A9FD6]/15 flex items-center justify-center mx-auto mb-5">
+            <Home className="w-8 h-8 text-[#2A9FD6]" />
+          </div>
+          <h2 className="text-white font-bold text-xl">Commencez par ajouter un bien</h2>
+          <p className="text-white/40 text-sm mt-2 max-w-sm mx-auto">
+            Ajoutez votre premier logement pour commencer à suivre vos locations.
           </p>
-          <a
-            href="/biens"
-            className="inline-block mt-4 bg-[#2A9FD6] hover:bg-[#238bbf] text-white text-sm font-medium px-5 py-2.5 rounded-lg transition-colors"
+          <Link
+            href="/biens/nouveau"
+            className="inline-flex items-center gap-2 mt-8 bg-[#2A9FD6] hover:bg-[#238bbf] text-white text-sm font-bold px-6 py-3 rounded-xl transition-all hover:shadow-lg hover:shadow-[#2A9FD6]/25"
           >
+            <Plus className="w-4 h-4" />
             Ajouter un bien
-          </a>
+          </Link>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {[
+            { title: "Générer les quittances", desc: "Créez les quittances du mois en un clic", href: "/quittances", color: "text-violet-400", bg: "bg-violet-500/10" },
+            { title: "Voir les relances", desc: "Suivez les loyers en retard", href: "/relances", color: "text-rose-400", bg: "bg-rose-500/10" },
+            { title: "Ajouter un bien", desc: "Enregistrez un nouveau logement", href: "/biens/nouveau", color: "text-[#2A9FD6]", bg: "bg-[#2A9FD6]/10" },
+          ].map((action) => (
+            <Link
+              key={action.href}
+              href={action.href}
+              className="group border border-white/8 bg-white/3 hover:bg-white/5 hover:border-white/15 rounded-2xl p-6 transition-all flex items-center justify-between"
+            >
+              <div>
+                <div className={`inline-block px-2 py-0.5 rounded-md ${action.bg} mb-3`}>
+                  <span className={`text-xs font-bold ${action.color}`}>Action rapide</span>
+                </div>
+                <h3 className="font-bold text-white text-sm">{action.title}</h3>
+                <p className="text-white/35 text-xs mt-1">{action.desc}</p>
+              </div>
+              <ArrowRight className="w-4 h-4 text-white/20 group-hover:text-white/60 group-hover:translate-x-1 transition-all shrink-0 ml-4" />
+            </Link>
+          ))}
         </div>
       )}
     </div>
