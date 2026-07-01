@@ -63,6 +63,12 @@ export default function ModifierBienPage({ params }: { params: { id: string } })
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    if (Number(form.loyer) <= 0) { setError("Le loyer doit être un montant positif."); return; }
+    if (form.charges && Number(form.charges) < 0) { setError("Les charges ne peuvent pas être négatives."); return; }
+    if (form.surface && Number(form.surface) <= 0) { setError("La surface doit être un nombre positif."); return; }
+    if (form.depot_garantie && Number(form.depot_garantie) < 0) { setError("Le dépôt de garantie ne peut pas être négatif."); return; }
+
     setLoading(true);
     setError(null);
     const supabase = createClient();

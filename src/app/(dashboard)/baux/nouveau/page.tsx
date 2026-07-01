@@ -73,14 +73,21 @@ export default function NouveauBailPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!bienId || !locataireId) { setError("Veuillez sélectionner un bien et un locataire."); return; }
+    if (Number(loyer) <= 0) { setError("Le loyer doit être un montant positif."); return; }
+    if (charges && Number(charges) < 0) { setError("Les charges ne peuvent pas être négatives."); return; }
+    if (depotGarantie && Number(depotGarantie) < 0) { setError("Le dépôt de garantie ne peut pas être négatif."); return; }
+    if (dateFin && dateFin <= dateDebut) { setError("La date de fin doit être postérieure à la date de début."); return; }
+    if (typeBail === "mobilite" && (dureesMobilite < 1 || dureesMobilite > 10)) {
+      setError("La durée d'un bail mobilité doit être comprise entre 1 et 10 mois.");
+      return;
+    }
     setLoading(true); setError(null);
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { setError("Vous devez être connecté."); setLoading(false); return; }
     const { error: insertError } = await supabase.from("baux").insert({
       user_id: user.id, bien_id: bienId, locataire_id: locataireId, type: typeBail,
-      duree_mois: typeBail === "mobilite" ? dureesMobilite : null,
-      loyer_hc: Number(loyer), charges: charges ? Number(charges) : 0,
+      loyer: Number(loyer), charges: charges ? Number(charges) : 0,
       depot_garantie: depotGarantie ? Number(depotGarantie) : null,
       date_debut: dateDebut, date_fin: dateFin || null,
     });
