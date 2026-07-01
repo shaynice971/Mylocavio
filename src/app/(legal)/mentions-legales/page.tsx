@@ -4,7 +4,7 @@ export const metadata: Metadata = { title: "Mentions légales" };
 
 export default function MentionsLegalesPage() {
   return (
-    <article className="prose prose-sm max-w-none prose-headings:font-black prose-headings:text-gray-900 prose-a:text-[#2A9FD6]">
+    <article className="prose prose-sm max-w-none prose-headings:font-black prose-headings:text-gray-900 prose-a:text-[#1c7aa8]">
       <h1 className="text-3xl font-black text-gray-900 mb-2">Mentions légales</h1>
       <p className="text-gray-400 text-sm mb-10">Dernière mise à jour : à compléter</p>
 

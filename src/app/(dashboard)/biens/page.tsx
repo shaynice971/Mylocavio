@@ -34,7 +34,7 @@ export default async function BiensPage() {
       {!biens || biens.length === 0 ? (
         <div className="border border-gray-200 bg-white shadow-sm rounded-2xl p-16 text-center">
           <div className="w-14 h-14 rounded-2xl bg-[#2A9FD6]/15 flex items-center justify-center mx-auto mb-5">
-            <Home className="w-7 h-7 text-[#2A9FD6]" />
+            <Home className="w-7 h-7 text-[#1c7aa8]" />
           </div>
           <h2 className="text-gray-900 font-bold text-lg">Aucun bien enregistré</h2>
           <p className="text-gray-400 text-sm mt-2 max-w-xs mx-auto">
@@ -87,7 +87,7 @@ export default async function BiensPage() {
                     <td className="px-6 py-4 text-right">
                       <Link
                         href={`/biens/${bien.id}`}
-                        className="inline-flex items-center gap-1 text-xs text-[#2A9FD6] hover:text-[#5bb8e8] font-semibold transition-colors"
+                        className="inline-flex items-center gap-1 text-xs text-[#1c7aa8] hover:text-[#145d80] font-semibold transition-colors"
                       >
                         Voir <ChevronRight className="w-3.5 h-3.5" />
                       </Link>

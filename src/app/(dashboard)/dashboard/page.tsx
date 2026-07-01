@@ -60,7 +60,7 @@ export default async function DashboardPage() {
     <div>
       <div className="mb-8">
         <h1 className="text-2xl font-black text-gray-900">
-          Bonjour, <span className="text-[#2A9FD6]">{prenom}</span>
+          Bonjour, <span className="text-[#1c7aa8]">{prenom}</span>
         </h1>
         <p className="text-gray-500 mt-1 text-sm capitalize">{moisActuel}</p>
       </div>
@@ -70,7 +70,7 @@ export default async function DashboardPage() {
           title="Biens gérés"
           value={nbBiens ?? 0}
           icon={Home}
-          color="text-[#2A9FD6]"
+          color="text-[#1c7aa8]"
           iconBg="bg-[#2A9FD6]/15"
         />
         <StatCard
@@ -100,7 +100,7 @@ export default async function DashboardPage() {
       {(nbBiens ?? 0) === 0 ? (
         <div className="border border-gray-200 bg-white shadow-sm rounded-2xl p-16 text-center">
           <div className="w-16 h-16 rounded-2xl bg-[#2A9FD6]/15 flex items-center justify-center mx-auto mb-5">
-            <Home className="w-8 h-8 text-[#2A9FD6]" />
+            <Home className="w-8 h-8 text-[#1c7aa8]" />
           </div>
           <h2 className="text-gray-900 font-bold text-xl">Commencez par ajouter un bien</h2>
           <p className="text-gray-500 text-sm mt-2 max-w-sm mx-auto">
@@ -119,7 +119,7 @@ export default async function DashboardPage() {
           {[
             { title: "Générer les quittances", desc: "Créez les quittances du mois en un clic", href: "/quittances", color: "text-violet-700", bg: "bg-violet-500/10" },
             { title: "Voir les relances", desc: "Suivez les loyers en retard", href: "/relances", color: "text-rose-700", bg: "bg-rose-500/10" },
-            { title: "Ajouter un bien", desc: "Enregistrez un nouveau logement", href: "/biens/nouveau", color: "text-[#2A9FD6]", bg: "bg-[#2A9FD6]/10" },
+            { title: "Ajouter un bien", desc: "Enregistrez un nouveau logement", href: "/biens/nouveau", color: "text-[#1c7aa8]", bg: "bg-[#2A9FD6]/10" },
           ].map((action) => (
             <Link
               key={action.href}

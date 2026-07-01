@@ -92,7 +92,7 @@ export default function BienDetailPage({ params }: { params: { id: string } }) {
     return (
       <div className="text-center p-12">
         <p className="text-gray-500 text-sm">Bien introuvable.</p>
-        <Link href="/biens" className="text-[#2A9FD6] text-sm mt-2 inline-block hover:text-[#5bb8e8] transition-colors">
+        <Link href="/biens" className="text-[#1c7aa8] text-sm mt-2 inline-block hover:text-[#145d80] transition-colors">
           ← Retour aux biens
         </Link>
       </div>
@@ -130,7 +130,7 @@ export default function BienDetailPage({ params }: { params: { id: string } }) {
             className={cn(
               "flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-all",
               activeTab === id
-                ? "border-[#2A9FD6] text-[#2A9FD6]"
+                ? "border-[#2A9FD6] text-[#1c7aa8]"
                 : "border-transparent text-gray-500 hover:text-gray-600"
             )}
           >
@@ -146,7 +146,7 @@ export default function BienDetailPage({ params }: { params: { id: string } }) {
           <div className="border border-gray-200 bg-white shadow-sm rounded-2xl p-6">
             <h2 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
               <div className="w-7 h-7 rounded-lg bg-[#2A9FD6]/15 flex items-center justify-center">
-                <Home className="w-3.5 h-3.5 text-[#2A9FD6]" />
+                <Home className="w-3.5 h-3.5 text-[#1c7aa8]" />
               </div>
               Informations du bien
             </h2>
@@ -195,7 +195,7 @@ export default function BienDetailPage({ params }: { params: { id: string } }) {
                 {!showLocataireForm ? (
                   <button
                     onClick={() => setShowLocataireForm(true)}
-                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#2A9FD6] hover:text-[#5bb8e8] transition-colors"
+                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#1c7aa8] hover:text-[#145d80] transition-colors"
                   >
                     <Plus className="w-4 h-4" />
                     Ajouter un locataire
@@ -258,7 +258,7 @@ export default function BienDetailPage({ params }: { params: { id: string } }) {
                   <p className="text-xs text-gray-400 mt-0.5">Recalculez le loyer selon l&apos;indice INSEE</p>
                 </div>
               </div>
-              <span className="text-sm font-semibold text-[#2A9FD6] group-hover:text-[#5bb8e8] transition-colors">
+              <span className="text-sm font-semibold text-[#1c7aa8] group-hover:text-[#145d80] transition-colors">
                 Calculer →
               </span>
             </Link>
@@ -298,7 +298,7 @@ export default function BienDetailPage({ params }: { params: { id: string } }) {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <a href={`/api/quittances/${q.id}/pdf`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs text-[#2A9FD6] hover:text-[#5bb8e8] font-semibold transition-colors">
+                      <a href={`/api/quittances/${q.id}/pdf`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs text-[#1c7aa8] hover:text-[#145d80] font-semibold transition-colors">
                         <Download className="w-3.5 h-3.5" />
                         PDF
                       </a>

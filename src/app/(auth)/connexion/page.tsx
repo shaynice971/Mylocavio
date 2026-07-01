@@ -50,7 +50,7 @@ export default function ConnexionPage() {
             <label htmlFor="password" className="block text-sm font-medium text-gray-500">
               Mot de passe
             </label>
-            <Link href="/mot-de-passe-oublie" className="text-xs text-[#2A9FD6] hover:text-[#5bb8e8] transition-colors">
+            <Link href="/mot-de-passe-oublie" className="text-xs text-[#1c7aa8] hover:text-[#145d80] transition-colors">
               Mot de passe oublié ?
             </Link>
           </div>
@@ -78,7 +78,7 @@ export default function ConnexionPage() {
 
       <p className="text-center text-sm text-gray-400 mt-6">
         Pas encore de compte ?{" "}
-        <Link href="/inscription" className="text-[#2A9FD6] font-semibold hover:text-[#5bb8e8] transition-colors">
+        <Link href="/inscription" className="text-[#1c7aa8] font-semibold hover:text-[#145d80] transition-colors">
           Créer un compte
         </Link>
       </p>

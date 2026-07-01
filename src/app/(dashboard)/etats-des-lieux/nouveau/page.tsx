@@ -106,7 +106,7 @@ export default function NouvelEtatDesLieuxPage() {
         {[1, 2, 3].map((s) => (
           <div key={s} className="flex items-center gap-2">
             <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
-              s === step ? "bg-[#2A9FD6] text-white" : s < step ? "bg-[#2A9FD6]/20 text-[#2A9FD6]" : "bg-gray-50 text-gray-400"
+              s === step ? "bg-[#2A9FD6] text-white" : s < step ? "bg-[#2A9FD6]/20 text-[#1c7aa8]" : "bg-gray-50 text-gray-400"
             }`}>
               {s}
             </div>
@@ -149,7 +149,7 @@ export default function NouvelEtatDesLieuxPage() {
                   className={`border-2 rounded-xl p-4 text-left transition-all ${type === t ? "border-[#2A9FD6] bg-[#2A9FD6]/10" : "border-gray-200 hover:border-gray-200 bg-white"}`}
                 >
                   <div className="text-2xl mb-1">{t === "entree" ? "🔑" : "🚪"}</div>
-                  <div className={`text-sm font-semibold ${type === t ? "text-[#2A9FD6]" : "text-gray-900"}`}>{t === "entree" ? "Entrée" : "Sortie"}</div>
+                  <div className={`text-sm font-semibold ${type === t ? "text-[#1c7aa8]" : "text-gray-900"}`}>{t === "entree" ? "Entrée" : "Sortie"}</div>
                   <div className="text-xs text-gray-400 mt-0.5">{t === "entree" ? "État des lieux d'entrée" : "État des lieux de sortie"}</div>
                 </button>
               ))}
@@ -208,7 +208,7 @@ export default function NouvelEtatDesLieuxPage() {
             ))}
           </div>
           <button onClick={() => setPieces((p) => [...p, { nom: "Nouvelle pièce", etat: "Bon état", observations: "" }])}
-            className="flex items-center gap-2 text-sm text-[#2A9FD6] hover:text-[#5bb8e8] font-semibold transition-colors"
+            className="flex items-center gap-2 text-sm text-[#1c7aa8] hover:text-[#145d80] font-semibold transition-colors"
           >
             <Plus className="w-4 h-4" />
             Ajouter une pièce

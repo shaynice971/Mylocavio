@@ -34,7 +34,7 @@ export default function RelanceButton({ relanceId }: Props) {
     <button
       onClick={handleClick}
       disabled={isPending}
-      className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#2A9FD6] hover:text-[#5bb8e8] disabled:opacity-60 transition-colors"
+      className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#1c7aa8] hover:text-[#145d80] disabled:opacity-60 transition-colors"
     >
       <Send className="w-3.5 h-3.5" />
       {isPending ? "Envoi..." : "Envoyer une relance"}

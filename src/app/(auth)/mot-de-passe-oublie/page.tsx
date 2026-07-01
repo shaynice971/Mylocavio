@@ -62,7 +62,7 @@ export default function MotDePasseOubliePage() {
       )}
 
       <p className="text-center text-sm text-gray-400 mt-6">
-        <Link href="/connexion" className="inline-flex items-center gap-1.5 text-[#2A9FD6] hover:text-[#5bb8e8] transition-colors font-semibold">
+        <Link href="/connexion" className="inline-flex items-center gap-1.5 text-[#1c7aa8] hover:text-[#145d80] transition-colors font-semibold">
           <ArrowLeft className="w-3.5 h-3.5" />
           Retour à la connexion
         </Link>

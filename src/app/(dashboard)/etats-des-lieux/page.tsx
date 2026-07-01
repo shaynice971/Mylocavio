@@ -92,7 +92,7 @@ export default async function EtatsDesLieuxPage() {
                       <Link
                         href={`/api/etats-des-lieux/${etat.id}/pdf`}
                         target="_blank"
-                        className="inline-flex items-center gap-1.5 text-[#2A9FD6] hover:text-[#5bb8e8] font-semibold text-xs transition-colors"
+                        className="inline-flex items-center gap-1.5 text-[#1c7aa8] hover:text-[#145d80] font-semibold text-xs transition-colors"
                       >
                         <Download className="w-3.5 h-3.5" />
                         PDF

@@ -29,7 +29,7 @@ export default function CookieBanner() {
           MyLocavio n&apos;utilise que des cookies strictement nécessaires au fonctionnement du
           service (authentification, sécurité de session). Aucun cookie publicitaire ou de mesure
           d&apos;audience tiers n&apos;est déposé. En savoir plus dans notre{" "}
-          <Link href="/confidentialite" className="text-[#2A9FD6] hover:text-[#238bbf] font-semibold underline">
+          <Link href="/confidentialite" className="text-[#1c7aa8] hover:text-[#238bbf] font-semibold underline">
             politique de confidentialité
           </Link>
           .

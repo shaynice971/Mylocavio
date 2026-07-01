@@ -52,11 +52,11 @@ export default function Sidebar() {
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all",
                 isActive
-                  ? "bg-[#2A9FD6]/15 text-[#2A9FD6] shadow-sm"
+                  ? "bg-[#2A9FD6]/15 text-[#1c7aa8] shadow-sm"
                   : "text-gray-500 hover:bg-gray-50 hover:text-gray-700"
               )}
             >
-              <Icon className={cn("w-4 h-4 shrink-0", isActive ? "text-[#2A9FD6]" : "text-gray-400")} />
+              <Icon className={cn("w-4 h-4 shrink-0", isActive ? "text-[#1c7aa8]" : "text-gray-400")} />
               {label}
               {isActive && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[#2A9FD6]" />}
             </Link>
@@ -71,11 +71,11 @@ export default function Sidebar() {
           className={cn(
             "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all",
             pathname === "/parametres"
-              ? "bg-[#2A9FD6]/15 text-[#2A9FD6]"
+              ? "bg-[#2A9FD6]/15 text-[#1c7aa8]"
               : "text-gray-500 hover:bg-gray-50 hover:text-gray-700"
           )}
         >
-          <IconSettings className={cn("w-4 h-4 shrink-0", pathname === "/parametres" ? "text-[#2A9FD6]" : "text-gray-400")} />
+          <IconSettings className={cn("w-4 h-4 shrink-0", pathname === "/parametres" ? "text-[#1c7aa8]" : "text-gray-400")} />
           Paramètres
         </Link>
 

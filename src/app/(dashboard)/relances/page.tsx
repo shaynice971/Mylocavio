@@ -29,7 +29,7 @@ export default async function RelancesPage() {
       {!relances || relances.length === 0 ? (
         <div className="border border-gray-200 bg-white shadow-sm rounded-2xl p-16 text-center">
           <div className="w-14 h-14 rounded-2xl bg-[#2A9FD6]/15 flex items-center justify-center mx-auto mb-5">
-            <Bell className="w-7 h-7 text-[#2A9FD6]" />
+            <Bell className="w-7 h-7 text-[#1c7aa8]" />
           </div>
           <h2 className="text-gray-900 font-bold text-lg">Aucun retard de paiement</h2>
           <p className="text-gray-400 text-sm mt-2">Tous vos loyers sont à jour.</p>

@@ -9,7 +9,7 @@ export default function NotFound() {
         <div className="mb-8 flex justify-center">
           <Logo dark />
         </div>
-        <p className="text-[#2A9FD6] text-sm font-bold tracking-[0.2em] uppercase mb-3">Erreur 404</p>
+        <p className="text-[#1c7aa8] text-sm font-bold tracking-[0.2em] uppercase mb-3">Erreur 404</p>
         <h1 className="text-3xl font-black text-gray-900">Page introuvable</h1>
         <p className="text-gray-500 text-sm mt-3 leading-relaxed">
           La page que vous cherchez n&apos;existe pas ou a été déplacée. Vérifiez l&apos;adresse

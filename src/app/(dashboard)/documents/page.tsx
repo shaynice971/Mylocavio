@@ -62,7 +62,7 @@ export default async function DocumentsPage() {
         {baux.length === 0 ? (
           <div className="border border-gray-200 bg-white shadow-sm rounded-2xl p-12 text-center">
             <div className="w-12 h-12 rounded-2xl bg-[#2A9FD6]/15 flex items-center justify-center mx-auto mb-4">
-              <FileText className="w-6 h-6 text-[#2A9FD6]" />
+              <FileText className="w-6 h-6 text-[#1c7aa8]" />
             </div>
             <p className="text-gray-500 text-sm font-medium">Aucun bail actif pour le moment.</p>
             <p className="text-gray-400 text-xs mt-1">Les baux apparaîtront ici une fois vos biens configurés.</p>
@@ -88,13 +88,13 @@ export default async function DocumentsPage() {
                       <td className="px-6 py-4 font-semibold text-gray-900">{bien ? `${bien.adresse}, ${bien.ville}` : "—"}</td>
                       <td className="px-6 py-4 text-gray-500">{locataire ? `${locataire.prenom} ${locataire.nom}` : "—"}</td>
                       <td className="px-6 py-4">
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#2A9FD6]/15 text-[#2A9FD6] border border-[#2A9FD6]/20">
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#2A9FD6]/15 text-[#1c7aa8] border border-[#2A9FD6]/20">
                           {typeBailLabel(bail.type)}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-gray-500 text-sm">{new Date(bail.date_debut).toLocaleDateString("fr-FR")}</td>
                       <td className="px-6 py-4 text-right">
-                        <Link href={`/api/baux/${bail.id}/pdf`} target="_blank" className="inline-flex items-center gap-1.5 text-[#2A9FD6] hover:text-[#5bb8e8] font-semibold text-xs transition-colors">
+                        <Link href={`/api/baux/${bail.id}/pdf`} target="_blank" className="inline-flex items-center gap-1.5 text-[#1c7aa8] hover:text-[#145d80] font-semibold text-xs transition-colors">
                           <Download className="w-3.5 h-3.5" />
                           PDF
                         </Link>
@@ -118,7 +118,7 @@ export default async function DocumentsPage() {
           {modeles.map((doc) => (
             <div key={doc.title} className="border border-gray-200 bg-white hover:bg-gray-50 hover:border-gray-300 shadow-sm rounded-xl p-5 flex items-start gap-3 transition-all">
               <div className="w-9 h-9 rounded-lg bg-[#2A9FD6]/15 flex items-center justify-center shrink-0">
-                <FileText className="w-4 h-4 text-[#2A9FD6]" />
+                <FileText className="w-4 h-4 text-[#1c7aa8]" />
               </div>
               <div className="flex-1 min-w-0">
                 <h3 className="font-semibold text-gray-900 text-sm">{doc.title}</h3>

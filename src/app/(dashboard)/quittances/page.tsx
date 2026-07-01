@@ -73,7 +73,7 @@ export default async function QuittancesPage() {
                         href={`/api/quittances/${q.id}/pdf`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 text-xs text-[#2A9FD6] hover:text-[#5bb8e8] font-semibold transition-colors"
+                        className="inline-flex items-center gap-1.5 text-xs text-[#1c7aa8] hover:text-[#145d80] font-semibold transition-colors"
                       >
                         <Download className="w-3.5 h-3.5" />
                         PDF

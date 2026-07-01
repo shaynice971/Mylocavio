@@ -42,7 +42,7 @@ export default function InscriptionPage() {
     return (
       <div className="border border-gray-200 bg-white shadow-sm rounded-2xl p-8 text-center">
         <div className="w-14 h-14 rounded-2xl bg-[#2A9FD6]/15 flex items-center justify-center mx-auto mb-5">
-          <MailCheck className="w-7 h-7 text-[#2A9FD6]" />
+          <MailCheck className="w-7 h-7 text-[#1c7aa8]" />
         </div>
         <h1 className="text-xl font-black text-gray-900">Vérifiez votre boîte mail</h1>
         <p className="text-gray-500 text-sm mt-2">
@@ -102,7 +102,7 @@ export default function InscriptionPage() {
 
       <p className="text-center text-sm text-gray-400 mt-6">
         Déjà un compte ?{" "}
-        <Link href="/connexion" className="text-[#2A9FD6] font-semibold hover:text-[#5bb8e8] transition-colors">
+        <Link href="/connexion" className="text-[#1c7aa8] font-semibold hover:text-[#145d80] transition-colors">
           Se connecter
         </Link>
       </p>

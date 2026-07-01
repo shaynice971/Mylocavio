@@ -125,7 +125,7 @@ export default function ParametresPage() {
         <Card className="border border-gray-100 shadow-sm">
           <CardHeader className="pb-0">
             <div className="flex items-center gap-2">
-              <Settings className="w-4 h-4 text-[#2A9FD6]" />
+              <Settings className="w-4 h-4 text-[#1c7aa8]" />
               <h2 className="font-semibold text-[#1a1a1a]">Mon profil</h2>
             </div>
             <Separator className="mt-4" />
@@ -182,7 +182,7 @@ export default function ParametresPage() {
                   {planConfig[plan].label}
                 </Badge>
               </div>
-              <button className="text-sm font-medium text-[#2A9FD6] hover:text-[#238bbf] transition-colors">
+              <button className="text-sm font-medium text-[#1c7aa8] hover:text-[#238bbf] transition-colors">
                 Changer de plan
               </button>
             </div>
@@ -192,7 +192,7 @@ export default function ParametresPage() {
                   key={key}
                   className={cn(
                     "text-center py-2.5 px-3 rounded-xl text-xs font-medium border transition-colors",
-                    key === plan ? "border-[#2A9FD6] text-[#2A9FD6] bg-[#2A9FD6]/5" : "border-gray-100 text-gray-400"
+                    key === plan ? "border-[#2A9FD6] text-[#1c7aa8] bg-[#2A9FD6]/5" : "border-gray-100 text-gray-400"
                   )}
                 >
                   {cfg.label}
@@ -205,7 +205,7 @@ export default function ParametresPage() {
         <Card className="border border-gray-100 shadow-sm">
           <CardHeader className="pb-0">
             <div className="flex items-center gap-2">
-              <Bell className="w-4 h-4 text-[#2A9FD6]" />
+              <Bell className="w-4 h-4 text-[#1c7aa8]" />
               <h2 className="font-semibold text-[#1a1a1a]">Notifications</h2>
             </div>
             <Separator className="mt-4" />
@@ -235,7 +235,7 @@ export default function ParametresPage() {
         <Card className="border border-gray-100 shadow-sm">
           <CardHeader className="pb-0">
             <div className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-[#2A9FD6]" />
+              <ShieldCheck className="w-4 h-4 text-[#1c7aa8]" />
               <h2 className="font-semibold text-[#1a1a1a]">Mes données (RGPD)</h2>
             </div>
             <Separator className="mt-4" />

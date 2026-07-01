@@ -92,7 +92,7 @@ export default function RevisionIrlPage({ params }: { params: { id: string } }) 
           </div>
           <p className="text-xs text-gray-400">
             L&apos;IRL est publié trimestriellement par l&apos;INSEE. Consultez{" "}
-            <a href="https://www.insee.fr" target="_blank" rel="noopener noreferrer" className="text-[#2A9FD6] hover:text-[#5bb8e8] transition-colors">
+            <a href="https://www.insee.fr" target="_blank" rel="noopener noreferrer" className="text-[#1c7aa8] hover:text-[#145d80] transition-colors">
               insee.fr
             </a>{" "}
             pour les dernières valeurs.
@@ -107,7 +107,7 @@ export default function RevisionIrlPage({ params }: { params: { id: string } }) 
             <div className="space-y-3 mb-6">
               <div>
                 <p className="text-xs text-gray-500 mb-1">Nouveau loyer HC</p>
-                <p className="text-3xl font-black text-[#2A9FD6]">
+                <p className="text-3xl font-black text-[#1c7aa8]">
                   {result.nouveauLoyer.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €
                 </p>
               </div>

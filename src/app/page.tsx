@@ -199,7 +199,7 @@ export default function HomePage() {
           <div className="mt-12 flex flex-wrap gap-6 justify-center">
             {["Données hébergées en France", "Conforme loi ALUR", "Gratuit sans carte bancaire"].map((item) => (
               <span key={item} className="flex items-center gap-2 text-sm text-gray-500">
-                <Check className="w-4 h-4 text-[#2A9FD6]" />
+                <Check className="w-4 h-4 text-[#1c7aa8]" />
                 {item}
               </span>
             ))}
@@ -217,7 +217,7 @@ export default function HomePage() {
             </div>
             <div className="p-6 grid grid-cols-2 md:grid-cols-4 gap-3">
               {[
-                { label: "Biens gérés", value: "3", color: "text-[#2A9FD6]" },
+                { label: "Biens gérés", value: "3", color: "text-[#1c7aa8]" },
                 { label: "Loyers du mois", value: "2 400 €", color: "text-emerald-700" },
                 { label: "Quittances", value: "12", color: "text-violet-700" },
                 { label: "En retard", value: "0", color: "text-rose-700" },
@@ -232,7 +232,7 @@ export default function HomePage() {
               {["12 rue de la Paix · Paris", "4 allée des Roses · Lyon", "28 bd Gambetta · Nantes"].map((addr) => (
                 <div key={addr} className="bg-white border border-gray-100 rounded-xl p-4 flex items-center gap-3">
                   <div className="w-8 h-8 rounded-lg bg-[#2A9FD6]/20 flex items-center justify-center shrink-0">
-                    <Home className="w-4 h-4 text-[#2A9FD6]" />
+                    <Home className="w-4 h-4 text-[#1c7aa8]" />
                   </div>
                   <p className="text-gray-500 text-xs truncate">{addr}</p>
                 </div>
@@ -264,7 +264,7 @@ export default function HomePage() {
       <section className="py-28">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center max-w-xl mx-auto">
-            <p className="text-[#2A9FD6] text-xs font-bold tracking-[0.2em] uppercase">Simple par conception</p>
+            <p className="text-[#1c7aa8] text-xs font-bold tracking-[0.2em] uppercase">Simple par conception</p>
             <h2 className="text-4xl md:text-5xl font-black text-gray-900 mt-4 leading-tight">
               Opérationnel en<br /><span className="text-gray-500">moins de 5 minutes</span>
             </h2>
@@ -295,7 +295,7 @@ export default function HomePage() {
       <section id="fonctionnalites" className="py-28 border-t border-gray-100">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center max-w-xl mx-auto">
-            <p className="text-[#2A9FD6] text-xs font-bold tracking-[0.2em] uppercase">Fonctionnalités</p>
+            <p className="text-[#1c7aa8] text-xs font-bold tracking-[0.2em] uppercase">Fonctionnalités</p>
             <h2 className="text-4xl md:text-5xl font-black text-gray-900 mt-4 leading-tight">
               Tout ce qu&apos;un bailleur<br /><span className="text-gray-500">indépendant doit avoir</span>
             </h2>
@@ -325,7 +325,7 @@ export default function HomePage() {
       <section id="tarifs" className="py-28 border-t border-gray-100">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center max-w-xl mx-auto">
-            <p className="text-[#2A9FD6] text-xs font-bold tracking-[0.2em] uppercase">Tarification</p>
+            <p className="text-[#1c7aa8] text-xs font-bold tracking-[0.2em] uppercase">Tarification</p>
             <h2 className="text-4xl md:text-5xl font-black text-gray-900 mt-4 leading-tight">
               Des tarifs honnêtes,<br /><span className="text-gray-500">sans surprise</span>
             </h2>
@@ -361,7 +361,7 @@ export default function HomePage() {
                   <ul className="space-y-3">
                     {plan.features.map((f) => (
                       <li key={f} className="flex items-center gap-3 text-sm text-gray-500">
-                        <Check className={`w-4 h-4 shrink-0 ${plan.highlight ? "text-[#2A9FD6]" : "text-emerald-500"}`} />
+                        <Check className={`w-4 h-4 shrink-0 ${plan.highlight ? "text-[#1c7aa8]" : "text-emerald-500"}`} />
                         {f}
                       </li>
                     ))}
@@ -391,7 +391,7 @@ export default function HomePage() {
       <section className="py-28 border-t border-gray-100">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
-            <p className="text-[#2A9FD6] text-xs font-bold tracking-[0.2em] uppercase">Témoignages</p>
+            <p className="text-[#1c7aa8] text-xs font-bold tracking-[0.2em] uppercase">Témoignages</p>
             <h2 className="text-4xl md:text-5xl font-black text-gray-900 mt-4">
               Ils ont simplifié<br /><span className="text-gray-500">leur gestion locative</span>
             </h2>
@@ -429,7 +429,7 @@ export default function HomePage() {
       <section id="faq" className="py-28 border-t border-gray-100">
         <div className="max-w-3xl mx-auto px-6">
           <div className="text-center mb-16">
-            <p className="text-[#2A9FD6] text-xs font-bold tracking-[0.2em] uppercase">FAQ</p>
+            <p className="text-[#1c7aa8] text-xs font-bold tracking-[0.2em] uppercase">FAQ</p>
             <h2 className="text-4xl font-black text-gray-900 mt-4">Questions fréquentes</h2>
           </div>
 
@@ -468,7 +468,7 @@ export default function HomePage() {
               return (
                 <div key={item.title} className="border border-gray-200 bg-white shadow-sm rounded-2xl p-6 text-center">
                   <div className="w-10 h-10 rounded-xl bg-[#2A9FD6]/15 flex items-center justify-center mx-auto mb-4">
-                    <Icon className="w-5 h-5 text-[#2A9FD6]" />
+                    <Icon className="w-5 h-5 text-[#1c7aa8]" />
                   </div>
                   <h3 className="font-bold text-gray-900 text-sm">{item.title}</h3>
                   <p className="text-gray-400 text-xs mt-2 leading-relaxed">{item.desc}</p>
