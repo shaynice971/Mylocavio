@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { GENERIC_SAVE_ERROR, GENERIC_DELETE_ERROR } from "@/lib/errors";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
@@ -81,7 +82,7 @@ export default function ModifierBienPage({ params }: { params: { id: string } })
       depot_garantie: form.depot_garantie ? Number(form.depot_garantie) : null,
       statut: form.statut,
     }).eq("id", params.id);
-    if (updateError) { setError(updateError.message); setLoading(false); return; }
+    if (updateError) { setError(GENERIC_SAVE_ERROR); setLoading(false); return; }
     router.push(`/biens/${params.id}`);
   }
 
@@ -90,7 +91,7 @@ export default function ModifierBienPage({ params }: { params: { id: string } })
     setLoading(true);
     const supabase = createClient();
     const { error: deleteError } = await supabase.from("biens").delete().eq("id", params.id);
-    if (deleteError) { setError(deleteError.message); setLoading(false); return; }
+    if (deleteError) { setError(GENERIC_DELETE_ERROR); setLoading(false); return; }
     router.push("/biens");
   }
 

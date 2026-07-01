@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { GENERIC_SAVE_ERROR } from "@/lib/errors";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
@@ -74,7 +75,7 @@ export default function NouveauBienPage() {
       .single();
 
     if (insertError || !data) {
-      setError(insertError?.message ?? "Une erreur est survenue.");
+      setError(GENERIC_SAVE_ERROR);
       setLoading(false);
       return;
     }

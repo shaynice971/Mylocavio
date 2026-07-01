@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { GENERIC_SAVE_ERROR } from "@/lib/errors";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
@@ -91,7 +92,7 @@ export default function NouveauBailPage() {
       depot_garantie: depotGarantie ? Number(depotGarantie) : null,
       date_debut: dateDebut, date_fin: dateFin || null,
     });
-    if (insertError) { setError(insertError.message); setLoading(false); return; }
+    if (insertError) { setError(GENERIC_SAVE_ERROR); setLoading(false); return; }
     router.push("/documents");
   }
 

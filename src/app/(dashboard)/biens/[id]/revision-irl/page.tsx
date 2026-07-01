@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { GENERIC_SAVE_ERROR } from "@/lib/errors";
 import Link from "next/link";
 import { ArrowLeft, TrendingUp, CheckCircle } from "lucide-react";
 
@@ -46,7 +47,7 @@ export default function RevisionIrlPage({ params }: { params: { id: string } }) 
     setApplyLoading(true); setApplyError(null); setApplySuccess(false);
     const supabase = createClient();
     const { error } = await supabase.from("biens").update({ loyer: Math.round(result.nouveauLoyer * 100) / 100 }).eq("id", params.id);
-    if (error) { setApplyError(error.message); } else {
+    if (error) { setApplyError(GENERIC_SAVE_ERROR); } else {
       setApplySuccess(true);
       setBienLoyer(result.nouveauLoyer);
       setLoyerActuel(String(Math.round(result.nouveauLoyer * 100) / 100));

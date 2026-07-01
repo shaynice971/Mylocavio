@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { GENERIC_SAVE_ERROR } from "@/lib/errors";
 import Link from "next/link";
 import { ArrowLeft, Home, User, FileText, FolderOpen, Pencil, Plus, TrendingUp, Download } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -71,7 +72,7 @@ export default function BienDetailPage({ params }: { params: { id: string } }) {
       email: locForm.email || null, telephone: locForm.telephone || null,
       date_entree: locForm.date_entree, actif: true,
     });
-    if (error) { setLocError(error.message); setLocLoading(false); return; }
+    if (error) { setLocError(GENERIC_SAVE_ERROR); setLocLoading(false); return; }
     setShowLocataireForm(false);
     setLocForm({ prenom: "", nom: "", email: "", telephone: "", date_entree: "" });
     setLocLoading(false);

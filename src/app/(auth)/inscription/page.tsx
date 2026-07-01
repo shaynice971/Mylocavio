@@ -4,6 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { friendlyAuthError } from "@/lib/errors";
+import { MailCheck } from "lucide-react";
 
 const inputClass = "w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2A9FD6]/50 focus:border-[#2A9FD6]/50 transition-all";
 
@@ -15,17 +17,47 @@ export default function InscriptionPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [confirmationRequise, setConfirmationRequise] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
     const supabase = createClient();
-    const { error: authError } = await supabase.auth.signUp({ email, password, options: { data: { prenom, nom } } });
-    if (authError) { setError(authError.message); setLoading(false); return; }
+    const { data, error: authError } = await supabase.auth.signUp({ email, password, options: { data: { prenom, nom } } });
+    if (authError) { setError(friendlyAuthError(authError.message)); setLoading(false); return; }
+    // Si la confirmation d'email est activée sur le projet Supabase, signUp ne
+    // renvoie pas de session active : on informe l'utilisateur plutôt que de
+    // le rediriger vers un dashboard qui le renverrait aussitôt vers /connexion.
+    if (!data.session) {
+      setConfirmationRequise(true);
+      setLoading(false);
+      return;
+    }
     router.push("/dashboard");
     router.refresh();
   };
+
+  if (confirmationRequise) {
+    return (
+      <div className="border border-gray-200 bg-white shadow-sm rounded-2xl p-8 text-center">
+        <div className="w-14 h-14 rounded-2xl bg-[#2A9FD6]/15 flex items-center justify-center mx-auto mb-5">
+          <MailCheck className="w-7 h-7 text-[#2A9FD6]" />
+        </div>
+        <h1 className="text-xl font-black text-gray-900">Vérifiez votre boîte mail</h1>
+        <p className="text-gray-500 text-sm mt-2">
+          Un e-mail de confirmation vous a été envoyé à <strong>{email}</strong>. Cliquez sur le
+          lien qu&apos;il contient pour activer votre compte, puis connectez-vous.
+        </p>
+        <Link
+          href="/connexion"
+          className="inline-flex items-center gap-2 mt-6 bg-[#2A9FD6] hover:bg-[#238bbf] text-white text-sm font-bold px-6 py-3 rounded-xl transition-all"
+        >
+          Aller à la connexion
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="border border-gray-200 bg-white shadow-sm backdrop-blur-sm rounded-2xl p-8">
