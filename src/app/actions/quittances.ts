@@ -39,7 +39,10 @@ export async function genererQuittancesDuMois(): Promise<{ count: number }> {
   const { data: inserted } = await supabase
     .from("quittances")
     .upsert(quittances, {
-      onConflict: "bien_id,locataire_id,mois",
+      // Doit correspondre exactement à la contrainte unique(locataire_id, mois) du schéma
+      // (supabase/schema.sql) : PostgREST rejette tout onConflict qui ne matche aucune
+      // contrainte unique existante.
+      onConflict: "locataire_id,mois",
       ignoreDuplicates: true,
     })
     .select("id");

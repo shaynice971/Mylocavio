@@ -28,7 +28,7 @@ export async function GET(
     .from("quittances")
     .select(
       `
-      id, mois, loyer, charges, total, statut, locataire_id,
+      id, mois, loyer, charges, total, statut, locataire_id, user_id,
       biens ( adresse, complement_adresse, code_postal, ville, type ),
       locataires ( prenom, nom )
     `
@@ -38,6 +38,11 @@ export async function GET(
 
   if (error || !quittance) {
     return new Response("Quittance introuvable", { status: 404 });
+  }
+
+  // Vérification explicite de propriété (défense en profondeur, en complément des policies RLS)
+  if (quittance.user_id !== user.id) {
+    return new Response("Accès non autorisé", { status: 403 });
   }
 
   // Fetch the bailleur profile (authenticated user)

@@ -191,13 +191,9 @@ function getSubtitle(type: string): string {
   return "Logement vide — Loi n°89-462 du 6 juillet 1989";
 }
 
-function getDureeInfo(type: string, dateFin: string | null): { duree: string; renouvellement: string | null } {
-  if (dateFin) {
-    return {
-      duree: `Du ${formatDateFr("2000-01-01")} au ${formatDateFr(dateFin)}`,
-      renouvellement: null,
-    };
-  }
+// N'est utilisé que lorsque bail.date_fin est absent (voir rendu ci-dessous) :
+// la durée est alors déduite du type de bail plutôt que de dates explicites.
+function getDureeInfo(type: string): { duree: string; renouvellement: string | null } {
   if (type === "meuble") {
     return { duree: "1 an", renouvellement: "Renouvellement tacite par périodes de 1 an" };
   }
@@ -221,7 +217,7 @@ export function BailPDF({ bail, bien, locataire, bailleur }: BailPDFProps) {
     .filter(Boolean)
     .join(", ");
 
-  const dureeInfo = getDureeInfo(bail.type, bail.date_fin);
+  const dureeInfo = getDureeInfo(bail.type);
   const dateDebut = formatDateFr(bail.date_debut);
 
   return (
