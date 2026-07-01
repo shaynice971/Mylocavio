@@ -180,3 +180,50 @@ create table if not exists public.etats_des_lieux (
 alter table public.etats_des_lieux enable row level security;
 create policy "etats_des_lieux: own data" on public.etats_des_lieux
   for all using (auth.uid() = user_id);
+
+-- ============================================================
+-- Migration additive — formulaire de contact + demandes de suppression
+-- de compte (RGPD). À exécuter dans Supabase SQL Editor.
+-- Aucune table existante n'est modifiée ou supprimée.
+-- ============================================================
+
+-- Messages envoyés via le formulaire de contact (public, visiteurs et utilisateurs connectés)
+create table if not exists public.contact_messages (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references public.profiles(id) on delete set null,
+  nom text not null,
+  email text not null,
+  sujet text,
+  message text not null,
+  statut text not null default 'nouveau' check (statut in ('nouveau', 'traite')),
+  created_at timestamptz default now()
+);
+
+alter table public.contact_messages enable row level security;
+
+-- N'importe qui (visiteur ou utilisateur connecté) peut envoyer un message.
+create policy "contact_messages: insert public" on public.contact_messages
+  for insert
+  to anon, authenticated
+  with check (true);
+
+-- Personne ne peut lire les messages via l'API publique : consultation
+-- réservée au propriétaire du projet Supabase (dashboard / service role).
+-- (Aucune policy SELECT créée intentionnellement.)
+
+-- Demandes de suppression de compte (RGPD). La suppression réelle du compte
+-- auth.users doit être effectuée manuellement ou via une tâche planifiée
+-- utilisant la clé service_role (jamais exposée côté client).
+create table if not exists public.account_deletion_requests (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references public.profiles(id) on delete cascade not null,
+  email text not null,
+  statut text not null default 'en_attente' check (statut in ('en_attente', 'traitee', 'annulee')),
+  created_at timestamptz default now(),
+  unique (user_id)
+);
+
+alter table public.account_deletion_requests enable row level security;
+
+create policy "account_deletion_requests: own data" on public.account_deletion_requests
+  for all using (auth.uid() = user_id);

@@ -529,7 +529,7 @@ export default function HomePage() {
             <div>
               <h4 className="font-bold text-gray-900 text-sm mb-5">Ressources</h4>
               <ul className="space-y-3">
-                {[{ l: "Centre d'aide", h: "#" }, { l: "Blog", h: "#" }, { l: "Guide ALUR", h: "#" }, { l: "Contact", h: "#" }].map((i) => (
+                {[{ l: "Centre d'aide", h: "#" }, { l: "Blog", h: "#" }, { l: "Guide ALUR", h: "#" }, { l: "Contact", h: "/contact" }].map((i) => (
                   <li key={i.l}><a href={i.h} className="text-gray-400 text-sm hover:text-gray-900 transition-colors">{i.l}</a></li>
                 ))}
               </ul>
@@ -537,7 +537,7 @@ export default function HomePage() {
             <div>
               <h4 className="font-bold text-gray-900 text-sm mb-5">Légal</h4>
               <ul className="space-y-3">
-                {[{ l: "Mentions légales", h: "#" }, { l: "Politique de confidentialité", h: "#" }, { l: "CGU", h: "#" }].map((i) => (
+                {[{ l: "Mentions légales", h: "/mentions-legales" }, { l: "Politique de confidentialité", h: "/confidentialite" }, { l: "CGU", h: "/cgu" }].map((i) => (
                   <li key={i.l}><a href={i.h} className="text-gray-400 text-sm hover:text-gray-900 transition-colors">{i.l}</a></li>
                 ))}
               </ul>

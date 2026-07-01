@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { Check, Bell, Settings } from "lucide-react";
+import { Check, Bell, Settings, ShieldCheck } from "lucide-react";
 
 type Plan = "gratuit" | "essentiel" | "pro" | "expert";
 
@@ -28,6 +28,9 @@ export default function ParametresPage() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [exporting, setExporting] = useState(false);
+  const [deletionLoading, setDeletionLoading] = useState(false);
+  const [deletionRequested, setDeletionRequested] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
@@ -64,6 +67,47 @@ export default function ParametresPage() {
     setSaving(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
+  };
+
+  const handleExport = async () => {
+    setExporting(true);
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { setExporting(false); return; }
+
+    const tables = ["biens", "locataires", "baux", "quittances", "relances", "etats_des_lieux"] as const;
+    const results = await Promise.all(
+      tables.map((table) => supabase.from(table).select("*").eq("user_id", user.id))
+    );
+
+    const exportData: Record<string, unknown> = {
+      exporte_le: new Date().toISOString(),
+      profil: { email: user.email, prenom, nom, telephone },
+    };
+    tables.forEach((table, i) => { exportData[table] = results[i].data ?? []; });
+
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `mylocavio-export-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    setExporting(false);
+  };
+
+  const handleDeleteRequest = async () => {
+    if (!window.confirm("Confirmez-vous votre demande de suppression définitive de compte ?")) return;
+    setDeletionLoading(true);
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { setDeletionLoading(false); return; }
+    await supabase.from("account_deletion_requests").upsert(
+      { user_id: user.id, email: user.email ?? "" },
+      { onConflict: "user_id" }
+    );
+    setDeletionLoading(false);
+    setDeletionRequested(true);
   };
 
   if (loading) {
@@ -184,6 +228,56 @@ export default function ParametresPage() {
                   </label>
                 </div>
               ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border border-gray-100 shadow-sm">
+          <CardHeader className="pb-0">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-[#2A9FD6]" />
+              <h2 className="font-semibold text-[#1a1a1a]">Mes données (RGPD)</h2>
+            </div>
+            <Separator className="mt-4" />
+          </CardHeader>
+          <CardContent className="pt-6 space-y-6">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-sm font-medium text-[#1a1a1a]">Exporter mes données</p>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  Téléchargez un fichier JSON contenant l&apos;ensemble de vos données (biens,
+                  locataires, baux, quittances, relances, états des lieux).
+                </p>
+              </div>
+              <button
+                onClick={handleExport}
+                disabled={exporting}
+                className="shrink-0 border border-gray-200 hover:bg-gray-50 disabled:opacity-60 text-sm font-semibold text-gray-700 px-4 py-2 rounded-xl transition-colors"
+              >
+                {exporting ? "Préparation..." : "Exporter (JSON)"}
+              </button>
+            </div>
+
+            <div className="border-t border-gray-100 pt-6">
+              <p className="text-sm font-bold text-rose-700 mb-1">Zone dangereuse</p>
+              <p className="text-xs text-gray-400 mb-4">
+                La suppression de votre compte entraînera la suppression définitive de toutes vos
+                données (biens, locataires, baux, quittances). Cette action est irréversible.
+              </p>
+              {deletionRequested ? (
+                <p className="text-sm text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3">
+                  Votre demande de suppression a bien été enregistrée. Elle sera traitée sous
+                  quelques jours ouvrés ; vous pouvez continuer à utiliser votre compte d&apos;ici là.
+                </p>
+              ) : (
+                <button
+                  onClick={handleDeleteRequest}
+                  disabled={deletionLoading}
+                  className="text-sm font-semibold text-rose-700 hover:text-rose-800 disabled:opacity-60 transition-colors"
+                >
+                  {deletionLoading ? "Envoi..." : "Demander la suppression de mon compte"}
+                </button>
+              )}
             </div>
           </CardContent>
         </Card>

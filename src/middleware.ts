@@ -35,10 +35,16 @@ export async function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
-  const publicPaths = ["/connexion", "/inscription", "/mot-de-passe-oublie", "/reinitialiser-mot-de-passe"];
-  const isPublicPath =
-    pathname === "/" ||
-    publicPaths.filter((p) => p !== "/").some((p) => pathname.startsWith(p));
+  // Pages d'authentification : un utilisateur déjà connecté est redirigé vers le dashboard.
+  const authPaths = ["/connexion", "/inscription", "/mot-de-passe-oublie", "/reinitialiser-mot-de-passe"];
+  const isAuthPath = authPaths.some((p) => pathname.startsWith(p));
+
+  // Pages toujours publiques (accessibles connecté ou non), pas de redirection.
+  const alwaysPublicPaths = ["/mentions-legales", "/confidentialite", "/cgu", "/contact"];
+  const isAlwaysPublicPath =
+    pathname === "/" || alwaysPublicPaths.some((p) => pathname.startsWith(p));
+
+  const isPublicPath = isAuthPath || isAlwaysPublicPath;
 
   if (!user && !isPublicPath) {
     const url = request.nextUrl.clone();
@@ -46,7 +52,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (user && isPublicPath) {
+  if (user && isAuthPath) {
     const url = request.nextUrl.clone();
     url.pathname = "/dashboard";
     return NextResponse.redirect(url);
