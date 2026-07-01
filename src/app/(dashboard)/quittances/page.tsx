@@ -1,37 +1,19 @@
 import { createClient } from "@/lib/supabase/server";
-import IconDocument from "@/components/icons/IconDocument";
+import { FileText, Download } from "lucide-react";
 import GenererButton from "./GenererButton";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Download } from "lucide-react";
 
 function moisFr(dateStr: string) {
   return new Date(dateStr).toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
 }
 
-const statutClasses: Record<string, string> = {
-  generee: "bg-blue-50 text-blue-700 border-blue-100 hover:bg-blue-50",
-  envoyee: "bg-amber-50 text-amber-700 border-amber-100 hover:bg-amber-50",
-  payee: "bg-emerald-50 text-emerald-700 border-emerald-100 hover:bg-emerald-50",
-};
-
-const statutLabels: Record<string, string> = {
-  generee: "Générée",
-  envoyee: "Envoyée",
-  payee: "Payée",
+const statutConfig: Record<string, { label: string; classes: string }> = {
+  generee: { label: "Générée", classes: "bg-blue-500/15 text-blue-400 border-blue-500/20" },
+  envoyee: { label: "Envoyée", classes: "bg-amber-500/15 text-amber-400 border-amber-500/20" },
+  payee: { label: "Payée", classes: "bg-emerald-500/15 text-emerald-400 border-emerald-500/20" },
 };
 
 export default async function QuittancesPage() {
   const supabase = await createClient();
-
   const { data: quittances } = await supabase
     .from("quittances")
     .select(`id, mois, loyer, charges, total, statut, biens ( adresse, ville ), locataires ( prenom, nom )`)
@@ -41,77 +23,68 @@ export default async function QuittancesPage() {
     <div>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-[#1a1a1a]">Quittances</h1>
-          <p className="text-gray-500 mt-1 text-sm">Gérez et envoyez vos quittances de loyer.</p>
+          <h1 className="text-2xl font-black text-white">Quittances</h1>
+          <p className="text-white/40 mt-1 text-sm">Gérez et envoyez vos quittances de loyer.</p>
         </div>
         <GenererButton />
       </div>
 
       {!quittances || quittances.length === 0 ? (
-        <Card className="border-0 shadow-sm">
-          <CardContent className="p-12 text-center">
-            <div className="w-14 h-14 bg-[#2A9FD6]/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <IconDocument className="w-7 h-7 text-[#2A9FD6]" />
-            </div>
-            <h2 className="text-[#1a1a1a] font-semibold text-lg">Aucune quittance</h2>
-            <p className="text-gray-400 text-sm mt-2 max-w-xs mx-auto">
-              Ajoutez des biens et des locataires pour générer vos premières quittances.
-            </p>
-          </CardContent>
-        </Card>
+        <div className="border border-white/8 bg-white/3 rounded-2xl p-16 text-center">
+          <div className="w-14 h-14 rounded-2xl bg-violet-500/15 flex items-center justify-center mx-auto mb-5">
+            <FileText className="w-7 h-7 text-violet-400" />
+          </div>
+          <h2 className="text-white font-bold text-lg">Aucune quittance</h2>
+          <p className="text-white/35 text-sm mt-2 max-w-xs mx-auto">
+            Ajoutez des biens et des locataires pour générer vos premières quittances.
+          </p>
+        </div>
       ) : (
-        <Card className="border border-gray-100 shadow-sm overflow-hidden">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-[#F7F9FC] hover:bg-[#F7F9FC]">
-                <TableHead className="font-semibold text-gray-600 pl-6">Bien</TableHead>
-                <TableHead className="font-semibold text-gray-600">Mois</TableHead>
-                <TableHead className="font-semibold text-gray-600">Locataire</TableHead>
-                <TableHead className="font-semibold text-gray-600">Montant</TableHead>
-                <TableHead className="font-semibold text-gray-600">Statut</TableHead>
-                <TableHead className="w-24" />
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+        <div className="border border-white/8 rounded-2xl overflow-hidden">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-white/5 bg-white/3">
+                <th className="text-left px-6 py-4 font-semibold text-white/30 text-xs tracking-wide uppercase">Bien</th>
+                <th className="text-left px-6 py-4 font-semibold text-white/30 text-xs tracking-wide uppercase">Mois</th>
+                <th className="text-left px-6 py-4 font-semibold text-white/30 text-xs tracking-wide uppercase">Locataire</th>
+                <th className="text-left px-6 py-4 font-semibold text-white/30 text-xs tracking-wide uppercase">Montant</th>
+                <th className="text-left px-6 py-4 font-semibold text-white/30 text-xs tracking-wide uppercase">Statut</th>
+                <th className="w-20" />
+              </tr>
+            </thead>
+            <tbody>
               {quittances.map((q) => {
                 const bien = Array.isArray(q.biens) ? q.biens[0] : q.biens;
                 const loc = Array.isArray(q.locataires) ? q.locataires[0] : q.locataires;
+                const s = statutConfig[q.statut] ?? statutConfig.generee;
                 return (
-                  <TableRow key={q.id} className="hover:bg-gray-50/60 transition-colors">
-                    <TableCell className="pl-6 py-4 font-medium text-[#1a1a1a]">
-                      {bien?.adresse ?? "—"}
-                    </TableCell>
-                    <TableCell className="text-gray-600 capitalize text-sm">
-                      {moisFr(q.mois)}
-                    </TableCell>
-                    <TableCell className="text-gray-600 text-sm">
-                      {loc ? `${loc.prenom} ${loc.nom}` : "—"}
-                    </TableCell>
-                    <TableCell className="font-semibold text-[#1a1a1a]">
-                      {Number(q.total).toLocaleString("fr-FR")} €
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className={statutClasses[q.statut] ?? statutClasses.generee}>
-                        {statutLabels[q.statut] ?? q.statut}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="pr-6 text-right">
+                  <tr key={q.id} className="border-b border-white/5 hover:bg-white/3 transition-colors">
+                    <td className="px-6 py-4 font-semibold text-white">{bien?.adresse ?? "—"}</td>
+                    <td className="px-6 py-4 text-white/50 capitalize text-sm">{moisFr(q.mois)}</td>
+                    <td className="px-6 py-4 text-white/50 text-sm">{loc ? `${loc.prenom} ${loc.nom}` : "—"}</td>
+                    <td className="px-6 py-4 font-bold text-white">{Number(q.total).toLocaleString("fr-FR")} €</td>
+                    <td className="px-6 py-4">
+                      <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold border ${s.classes}`}>
+                        {s.label}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-right">
                       <a
                         href={`/api/quittances/${q.id}/pdf`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 text-xs text-[#2A9FD6] hover:text-[#238bbf] font-medium"
+                        className="inline-flex items-center gap-1.5 text-xs text-[#2A9FD6] hover:text-[#5bb8e8] font-semibold transition-colors"
                       >
                         <Download className="w-3.5 h-3.5" />
                         PDF
                       </a>
-                    </TableCell>
-                  </TableRow>
+                    </td>
+                  </tr>
                 );
               })}
-            </TableBody>
-          </Table>
-        </Card>
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

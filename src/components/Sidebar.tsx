@@ -13,6 +13,7 @@ import IconSettings from "@/components/icons/IconSettings";
 import IconFolder from "@/components/icons/IconFolder";
 import IconChart from "@/components/icons/IconChart";
 import IconClipboard from "@/components/icons/IconClipboard";
+import { Home, LogOut } from "lucide-react";
 
 const navLinks = [
   { href: "/dashboard", label: "Dashboard", icon: IconChart },
@@ -21,10 +22,6 @@ const navLinks = [
   { href: "/documents", label: "Baux & Documents", icon: IconFolder },
   { href: "/etats-des-lieux", label: "États des lieux", icon: IconClipboard },
   { href: "/relances", label: "Relances", icon: IconBell },
-];
-
-const bottomLinks = [
-  { href: "/parametres", label: "Parametres", icon: IconSettings },
 ];
 
 export default function Sidebar() {
@@ -39,83 +36,68 @@ export default function Sidebar() {
   }
 
   const SidebarContent = () => (
-    <div className="flex flex-col h-full py-6 px-4">
-      <div className="mb-10 px-2">
-        <Logo />
+    <div className="flex flex-col h-full py-6 px-3">
+      <div className="mb-8 px-3">
+        <Logo dark />
       </div>
-      <nav className="flex-1 space-y-1">
+
+      <nav className="flex-1 space-y-0.5">
         {navLinks.map(({ href, label, icon: Icon }) => {
-          const isActive =
-            pathname === href || pathname.startsWith(href + "/");
+          const isActive = pathname === href || pathname.startsWith(href + "/");
           return (
             <Link
               key={href}
               href={href}
               onClick={() => setMobileOpen(false)}
               className={cn(
-                "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors",
+                "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all",
                 isActive
-                  ? "bg-[#2A9FD6]/10 text-[#2A9FD6]"
-                  : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+                  ? "bg-[#2A9FD6]/15 text-[#2A9FD6] shadow-sm"
+                  : "text-white/40 hover:bg-white/5 hover:text-white/80"
               )}
             >
-              <Icon
-                className={cn(
-                  "w-5 h-5 shrink-0",
-                  isActive ? "text-[#2A9FD6]" : "text-gray-400"
-                )}
-              />
+              <Icon className={cn("w-4 h-4 shrink-0", isActive ? "text-[#2A9FD6]" : "text-white/30")} />
               {label}
+              {isActive && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[#2A9FD6]" />}
             </Link>
           );
         })}
       </nav>
-      <div className="mt-auto space-y-1">
-        {bottomLinks.map(({ href, label, icon: Icon }) => {
-          const isActive = pathname === href;
-          return (
-            <Link
-              key={href}
-              href={href}
-              onClick={() => setMobileOpen(false)}
-              className={cn(
-                "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors",
-                isActive
-                  ? "bg-[#2A9FD6]/10 text-[#2A9FD6]"
-                  : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
-              )}
-            >
-              <Icon
-                className={cn(
-                  "w-5 h-5 shrink-0",
-                  isActive ? "text-[#2A9FD6]" : "text-gray-400"
-                )}
-              />
-              {label}
-            </Link>
-          );
-        })}
-        <div className="px-4 pt-4 border-t border-gray-100 space-y-1">
-          <Link
-            href="/"
-            onClick={() => setMobileOpen(false)}
-            className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-900 transition-colors"
-          >
-            <svg className="w-5 h-5 shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 12L11.204 3.045a1.125 1.125 0 011.591 0L21.75 12M4.5 9.75V19.5a.75.75 0 00.75.75h4.5a.75.75 0 00.75-.75v-4.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75v4.5a.75.75 0 00.75.75h4.5a.75.75 0 00.75-.75V9.75" />
-            </svg>
-            Accueil
-          </Link>
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-rose-500 hover:bg-rose-50 transition-colors"
-          >
-            <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
-            </svg>
-            Déconnexion
-          </button>
-          <p className="text-xs text-gray-400 px-4 pt-2">&copy; 2026 MyLocavio</p>
+
+      <div className="mt-auto space-y-0.5 pt-4 border-t border-white/5">
+        <Link
+          href="/parametres"
+          onClick={() => setMobileOpen(false)}
+          className={cn(
+            "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all",
+            pathname === "/parametres"
+              ? "bg-[#2A9FD6]/15 text-[#2A9FD6]"
+              : "text-white/40 hover:bg-white/5 hover:text-white/80"
+          )}
+        >
+          <IconSettings className={cn("w-4 h-4 shrink-0", pathname === "/parametres" ? "text-[#2A9FD6]" : "text-white/30")} />
+          Paramètres
+        </Link>
+
+        <Link
+          href="/"
+          onClick={() => setMobileOpen(false)}
+          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-white/40 hover:bg-white/5 hover:text-white/80 transition-all"
+        >
+          <Home className="w-4 h-4 shrink-0 text-white/30" />
+          Accueil
+        </Link>
+
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-rose-400/70 hover:bg-rose-500/10 hover:text-rose-400 transition-all"
+        >
+          <LogOut className="w-4 h-4 shrink-0" />
+          Déconnexion
+        </button>
+
+        <div className="px-3 pt-4">
+          <p className="text-white/15 text-xs">&copy; 2026 MyLocavio</p>
         </div>
       </div>
     </div>
@@ -124,11 +106,11 @@ export default function Sidebar() {
   return (
     <>
       {/* Mobile top bar */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-30 flex items-center justify-between bg-white border-b border-gray-100 px-4 h-14">
-        <Logo />
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-30 flex items-center justify-between bg-[#0D1117] border-b border-white/5 px-4 h-14">
+        <Logo dark />
         <button
           onClick={() => setMobileOpen(true)}
-          className="p-2 rounded-lg text-gray-500 hover:bg-gray-50"
+          className="p-2 rounded-lg text-white/40 hover:bg-white/5"
           aria-label="Ouvrir le menu"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -137,27 +119,22 @@ export default function Sidebar() {
         </button>
       </div>
 
-      {/* Mobile drawer overlay */}
+      {/* Mobile overlay */}
       {mobileOpen && (
-        <div
-          className="lg:hidden fixed inset-0 z-40 bg-black/30"
-          onClick={() => setMobileOpen(false)}
-        />
+        <div className="lg:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
       )}
 
       {/* Mobile drawer */}
-      <aside
-        className={cn(
-          "lg:hidden fixed top-0 left-0 h-full w-64 z-50 bg-white shadow-xl transform transition-transform duration-200",
-          mobileOpen ? "translate-x-0" : "-translate-x-full"
-        )}
-      >
+      <aside className={cn(
+        "lg:hidden fixed top-0 left-0 h-full w-64 z-50 bg-[#0D1117] border-r border-white/5 transform transition-transform duration-200",
+        mobileOpen ? "translate-x-0" : "-translate-x-full"
+      )}>
         <button
           onClick={() => setMobileOpen(false)}
-          className="absolute top-4 right-4 p-1 rounded text-gray-400 hover:text-gray-600"
+          className="absolute top-4 right-4 p-1.5 rounded-lg text-white/30 hover:text-white/60 hover:bg-white/5"
           aria-label="Fermer le menu"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
@@ -165,7 +142,7 @@ export default function Sidebar() {
       </aside>
 
       {/* Desktop sidebar */}
-      <aside className="hidden lg:flex lg:flex-col fixed top-0 left-0 h-full w-64 bg-white border-r border-gray-100 z-20">
+      <aside className="hidden lg:flex lg:flex-col fixed top-0 left-0 h-full w-64 bg-[#0D1117] border-r border-white/5 z-20">
         <SidebarContent />
       </aside>
     </>

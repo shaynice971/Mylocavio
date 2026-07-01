@@ -1,36 +1,30 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import IconHome from "@/components/icons/IconHome";
-import IconDocument from "@/components/icons/IconDocument";
-import IconChart from "@/components/icons/IconChart";
-import IconBell from "@/components/icons/IconBell";
-import { Card, CardContent } from "@/components/ui/card";
+import { Home, TrendingUp, FileText, Bell, Plus, ArrowRight } from "lucide-react";
 
 interface StatCardProps {
   title: string;
   value: string | number;
   icon: React.ComponentType<{ className?: string }>;
+  color: string;
   iconBg: string;
-  iconColor: string;
   trend?: string;
 }
 
-function StatCard({ title, value, icon: Icon, iconBg, iconColor, trend }: StatCardProps) {
+function StatCard({ title, value, icon: Icon, color, iconBg, trend }: StatCardProps) {
   return (
-    <Card className="border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-      <CardContent className="p-6">
-        <div className="flex items-start justify-between">
-          <div>
-            <p className="text-sm text-gray-500 font-medium">{title}</p>
-            <p className="text-3xl font-bold text-[#1a1a1a] mt-1.5">{value}</p>
-            {trend && <p className="text-xs text-gray-400 mt-1">{trend}</p>}
-          </div>
-          <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${iconBg}`}>
-            <Icon className={`w-5 h-5 ${iconColor}`} />
-          </div>
+    <div className="border border-white/8 bg-white/3 hover:bg-white/5 hover:border-white/15 rounded-2xl p-6 transition-all">
+      <div className="flex items-start justify-between">
+        <div>
+          <p className="text-white/40 text-sm font-medium">{title}</p>
+          <p className={`text-3xl font-black mt-2 ${color}`}>{value}</p>
+          {trend && <p className="text-white/25 text-xs mt-1">{trend}</p>}
         </div>
-      </CardContent>
-    </Card>
+        <div className={`w-11 h-11 rounded-xl ${iconBg} flex items-center justify-center shrink-0`}>
+          <Icon className={`w-5 h-5 ${color}`} />
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -65,64 +59,84 @@ export default async function DashboardPage() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-[#1a1a1a]">
-          Bonjour, {prenom}
+        <h1 className="text-2xl font-black text-white">
+          Bonjour, <span className="text-[#2A9FD6]">{prenom}</span>
         </h1>
-        <p className="text-gray-500 mt-1 text-sm capitalize">
-          Tableau de bord · {moisActuel}
-        </p>
+        <p className="text-white/40 mt-1 text-sm capitalize">{moisActuel}</p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
         <StatCard
           title="Biens gérés"
           value={nbBiens ?? 0}
-          icon={IconHome}
-          iconBg="bg-[#2A9FD6]/10"
-          iconColor="text-[#2A9FD6]"
+          icon={Home}
+          color="text-[#2A9FD6]"
+          iconBg="bg-[#2A9FD6]/15"
         />
         <StatCard
           title="Loyers du mois"
           value={`${totalLoyers.toLocaleString("fr-FR")} €`}
-          icon={IconChart}
-          iconBg="bg-emerald-50"
-          iconColor="text-emerald-600"
+          icon={TrendingUp}
+          color="text-emerald-400"
+          iconBg="bg-emerald-500/15"
           trend="Biens loués uniquement"
         />
         <StatCard
           title="Quittances générées"
           value={nbQuittances ?? 0}
-          icon={IconDocument}
-          iconBg="bg-violet-50"
-          iconColor="text-violet-600"
+          icon={FileText}
+          color="text-violet-400"
+          iconBg="bg-violet-500/15"
         />
         <StatCard
           title="Loyers en retard"
           value={nbRelances ?? 0}
-          icon={IconBell}
-          iconBg={nbRelances ? "bg-rose-50" : "bg-gray-50"}
-          iconColor={nbRelances ? "text-rose-500" : "text-gray-400"}
+          icon={Bell}
+          color={nbRelances ? "text-rose-400" : "text-white/20"}
+          iconBg={nbRelances ? "bg-rose-500/15" : "bg-white/5"}
         />
       </div>
 
-      {(nbBiens ?? 0) === 0 && (
-        <Card className="mt-8 border-0 shadow-sm">
-          <CardContent className="p-12 text-center">
-            <div className="w-14 h-14 bg-[#2A9FD6]/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <IconHome className="w-7 h-7 text-[#2A9FD6]" />
-            </div>
-            <h2 className="text-[#1a1a1a] font-semibold text-lg">Commencez par ajouter un bien</h2>
-            <p className="text-gray-400 text-sm mt-2 max-w-sm mx-auto">
-              Ajoutez votre premier bien pour commencer à gérer vos locations.
-            </p>
+      {(nbBiens ?? 0) === 0 ? (
+        <div className="border border-white/8 bg-white/3 rounded-2xl p-16 text-center">
+          <div className="w-16 h-16 rounded-2xl bg-[#2A9FD6]/15 flex items-center justify-center mx-auto mb-5">
+            <Home className="w-8 h-8 text-[#2A9FD6]" />
+          </div>
+          <h2 className="text-white font-bold text-xl">Commencez par ajouter un bien</h2>
+          <p className="text-white/40 text-sm mt-2 max-w-sm mx-auto">
+            Ajoutez votre premier logement pour commencer à suivre vos locations.
+          </p>
+          <Link
+            href="/biens/nouveau"
+            className="inline-flex items-center gap-2 mt-8 bg-[#2A9FD6] hover:bg-[#238bbf] text-white text-sm font-bold px-6 py-3 rounded-xl transition-all hover:shadow-lg hover:shadow-[#2A9FD6]/25"
+          >
+            <Plus className="w-4 h-4" />
+            Ajouter un bien
+          </Link>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {[
+            { title: "Générer les quittances", desc: "Créez les quittances du mois en un clic", href: "/quittances", color: "text-violet-400", bg: "bg-violet-500/10" },
+            { title: "Voir les relances", desc: "Suivez les loyers en retard", href: "/relances", color: "text-rose-400", bg: "bg-rose-500/10" },
+            { title: "Ajouter un bien", desc: "Enregistrez un nouveau logement", href: "/biens/nouveau", color: "text-[#2A9FD6]", bg: "bg-[#2A9FD6]/10" },
+          ].map((action) => (
             <Link
-              href="/biens/nouveau"
-              className="inline-block mt-6 bg-[#2A9FD6] hover:bg-[#238bbf] text-white text-sm font-semibold px-6 py-2.5 rounded-lg transition-colors"
+              key={action.href}
+              href={action.href}
+              className="group border border-white/8 bg-white/3 hover:bg-white/5 hover:border-white/15 rounded-2xl p-6 transition-all flex items-center justify-between"
             >
-              Ajouter un bien
+              <div>
+                <div className={`inline-block px-2 py-0.5 rounded-md ${action.bg} mb-3`}>
+                  <span className={`text-xs font-bold ${action.color}`}>Action rapide</span>
+                </div>
+                <h3 className="font-bold text-white text-sm">{action.title}</h3>
+                <p className="text-white/35 text-xs mt-1">{action.desc}</p>
+              </div>
+              <ArrowRight className="w-4 h-4 text-white/20 group-hover:text-white/60 group-hover:translate-x-1 transition-all shrink-0 ml-4" />
             </Link>
-          </CardContent>
-        </Card>
+          ))}
+        </div>
       )}
     </div>
   );

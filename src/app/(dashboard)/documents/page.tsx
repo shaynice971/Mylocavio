@@ -1,53 +1,16 @@
-import { Download, Plus } from "lucide-react";
+import { Download, Plus, FileText, FolderOpen, ClipboardList } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import IconDocument from "@/components/icons/IconDocument";
-import IconFolder from "@/components/icons/IconFolder";
-import IconClipboard from "@/components/icons/IconClipboard";
-
-interface DocumentCardProps {
-  title: string;
-  description: string;
-}
-
-function DocumentCard({ title, description }: DocumentCardProps) {
-  return (
-    <div className="bg-white rounded-xl shadow-sm p-6 flex items-start gap-4 hover:shadow transition-shadow">
-      <div className="w-10 h-10 bg-[#2A9FD6]/10 rounded-lg flex items-center justify-center shrink-0">
-        <IconDocument className="w-5 h-5 text-[#2A9FD6]" />
-      </div>
-      <div className="flex-1 min-w-0">
-        <h3 className="font-medium text-[#1a1a1a] text-sm">{title}</h3>
-        <p className="text-xs text-gray-500 mt-0.5">{description}</p>
-      </div>
-      <button
-        className="shrink-0 p-1.5 text-gray-300 hover:text-[#2A9FD6] transition-colors"
-        aria-label="Telecharger"
-      >
-        <Download className="w-4 h-4" />
-      </button>
-    </div>
-  );
-}
 
 const modeles = [
-  {
-    title: "Avenant au bail",
-    description: "Modification ou ajout de clauses au bail existant",
-  },
-  {
-    title: "Conge bailleur",
-    description: "Lettre de conge delivre au locataire pour vente ou reprise",
-  },
-  {
-    title: "Conge locataire",
-    description: "Lettre de conge envoyee par le locataire au bailleur",
-  },
+  { title: "Avenant au bail", description: "Modification ou ajout de clauses au bail existant" },
+  { title: "Congé bailleur", description: "Lettre de congé délivré au locataire pour vente ou reprise" },
+  { title: "Congé locataire", description: "Lettre de congé envoyée par le locataire au bailleur" },
 ];
 
 function typeBailLabel(type: string): string {
-  if (type === "meuble") return "Meuble";
-  if (type === "mobilite") return "Mobilite";
+  if (type === "meuble") return "Meublé";
+  if (type === "mobilite") return "Mobilité";
   return "Vide";
 }
 
@@ -61,24 +24,15 @@ interface BailRow {
 
 export default async function DocumentsPage() {
   const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
 
   let baux: BailRow[] = [];
-
   if (user) {
     const { data } = await supabase
       .from("baux")
-      .select(
-        `id, type, date_debut,
-         biens ( adresse, ville ),
-         locataires ( prenom, nom )`
-      )
+      .select(`id, type, date_debut, biens ( adresse, ville ), locataires ( prenom, nom )`)
       .eq("user_id", user.id)
       .order("date_debut", { ascending: false });
-
     baux = (data as BailRow[]) ?? [];
   }
 
@@ -86,87 +40,63 @@ export default async function DocumentsPage() {
     <div>
       <div className="mb-8 flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[#1a1a1a]">Baux &amp; Documents</h1>
-          <p className="text-gray-500 mt-1">
-            Accedez a vos contrats de bail et modeles de documents juridiques.
-          </p>
+          <h1 className="text-2xl font-black text-white">Baux &amp; Documents</h1>
+          <p className="text-white/40 mt-1 text-sm">Accédez à vos contrats et modèles juridiques.</p>
         </div>
         <Link
           href="/baux/nouveau"
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#2A9FD6] hover:bg-[#238bbf] text-white text-sm font-medium rounded-lg transition-colors"
+          className="inline-flex items-center gap-2 bg-[#2A9FD6] hover:bg-[#238bbf] text-white text-sm font-bold px-4 py-2.5 rounded-xl transition-all hover:shadow-lg hover:shadow-[#2A9FD6]/25"
         >
           <Plus className="w-4 h-4" />
-          Creer un nouveau bail
+          Créer un bail
         </Link>
       </div>
 
-      {/* Baux en cours */}
+      {/* Baux */}
       <section className="mb-8">
-        <h2 className="text-base font-semibold text-[#1a1a1a] mb-4 flex items-center gap-2">
-          <IconFolder className="w-4 h-4 text-[#2A9FD6]" />
+        <h2 className="text-sm font-bold text-white/50 uppercase tracking-wider mb-4 flex items-center gap-2">
+          <FolderOpen className="w-4 h-4" />
           Baux en cours
         </h2>
 
         {baux.length === 0 ? (
-          <div className="bg-white rounded-xl shadow-sm p-10 text-center">
-            <div className="w-14 h-14 bg-[#2A9FD6]/10 rounded-xl flex items-center justify-center mx-auto mb-4">
-              <IconDocument className="w-7 h-7 text-[#2A9FD6]" />
+          <div className="border border-white/8 bg-white/3 rounded-2xl p-12 text-center">
+            <div className="w-12 h-12 rounded-2xl bg-[#2A9FD6]/15 flex items-center justify-center mx-auto mb-4">
+              <FileText className="w-6 h-6 text-[#2A9FD6]" />
             </div>
-            <p className="text-gray-600 text-sm font-medium">Aucun bail actif pour le moment.</p>
-            <p className="text-gray-400 text-xs mt-1">
-              Les baux apparaitront ici une fois vos biens configures.
-            </p>
+            <p className="text-white/60 text-sm font-medium">Aucun bail actif pour le moment.</p>
+            <p className="text-white/25 text-xs mt-1">Les baux apparaîtront ici une fois vos biens configurés.</p>
           </div>
         ) : (
-          <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+          <div className="border border-white/8 rounded-2xl overflow-hidden">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-[#F7F9FC] border-b border-gray-100">
-                  <th className="text-left px-6 py-4 font-medium text-gray-500">Bien</th>
-                  <th className="text-left px-6 py-4 font-medium text-gray-500">Locataire</th>
-                  <th className="text-left px-6 py-4 font-medium text-gray-500">Type</th>
-                  <th className="text-left px-6 py-4 font-medium text-gray-500">Debut</th>
-                  <th className="text-right px-6 py-4 font-medium text-gray-500">Contrat</th>
+                <tr className="border-b border-white/5 bg-white/3">
+                  <th className="text-left px-6 py-4 font-semibold text-white/30 text-xs tracking-wide uppercase">Bien</th>
+                  <th className="text-left px-6 py-4 font-semibold text-white/30 text-xs tracking-wide uppercase">Locataire</th>
+                  <th className="text-left px-6 py-4 font-semibold text-white/30 text-xs tracking-wide uppercase">Type</th>
+                  <th className="text-left px-6 py-4 font-semibold text-white/30 text-xs tracking-wide uppercase">Début</th>
+                  <th className="text-right px-6 py-4" />
                 </tr>
               </thead>
               <tbody>
                 {baux.map((bail) => {
-                  const bien = Array.isArray(bail.biens)
-                    ? bail.biens[0]
-                    : bail.biens;
-                  const locataire = Array.isArray(bail.locataires)
-                    ? bail.locataires[0]
-                    : bail.locataires;
-
+                  const bien = Array.isArray(bail.biens) ? bail.biens[0] : bail.biens;
+                  const locataire = Array.isArray(bail.locataires) ? bail.locataires[0] : bail.locataires;
                   return (
-                    <tr
-                      key={bail.id}
-                      className="border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors"
-                    >
-                      <td className="px-6 py-4 text-[#1a1a1a] font-medium">
-                        {bien ? `${bien.adresse}, ${bien.ville}` : "—"}
-                      </td>
-                      <td className="px-6 py-4 text-gray-600">
-                        {locataire
-                          ? `${locataire.prenom} ${locataire.nom}`
-                          : "—"}
-                      </td>
+                    <tr key={bail.id} className="border-b border-white/5 hover:bg-white/3 transition-colors">
+                      <td className="px-6 py-4 font-semibold text-white">{bien ? `${bien.adresse}, ${bien.ville}` : "—"}</td>
+                      <td className="px-6 py-4 text-white/50">{locataire ? `${locataire.prenom} ${locataire.nom}` : "—"}</td>
                       <td className="px-6 py-4">
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#2A9FD6]/10 text-[#2A9FD6]">
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#2A9FD6]/15 text-[#2A9FD6] border border-[#2A9FD6]/20">
                           {typeBailLabel(bail.type)}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-gray-600">
-                        {new Date(bail.date_debut).toLocaleDateString("fr-FR")}
-                      </td>
+                      <td className="px-6 py-4 text-white/40 text-sm">{new Date(bail.date_debut).toLocaleDateString("fr-FR")}</td>
                       <td className="px-6 py-4 text-right">
-                        <Link
-                          href={`/api/baux/${bail.id}/pdf`}
-                          className="inline-flex items-center gap-1.5 text-[#2A9FD6] hover:text-[#238bbf] font-medium text-xs transition-colors"
-                          target="_blank"
-                        >
+                        <Link href={`/api/baux/${bail.id}/pdf`} target="_blank" className="inline-flex items-center gap-1.5 text-[#2A9FD6] hover:text-[#5bb8e8] font-semibold text-xs transition-colors">
                           <Download className="w-3.5 h-3.5" />
-                          Telecharger PDF
+                          PDF
                         </Link>
                       </td>
                     </tr>
@@ -178,25 +108,31 @@ export default async function DocumentsPage() {
         )}
       </section>
 
-      {/* Modeles de documents */}
+      {/* Modèles */}
       <section>
-        <h2 className="text-base font-semibold text-[#1a1a1a] mb-4 flex items-center gap-2">
-          <IconDocument className="w-4 h-4 text-[#2A9FD6]" />
-          Modeles de documents
+        <h2 className="text-sm font-bold text-white/50 uppercase tracking-wider mb-4 flex items-center gap-2">
+          <FileText className="w-4 h-4" />
+          Modèles de documents
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
           {modeles.map((doc) => (
-            <DocumentCard key={doc.title} {...doc} />
-          ))}
-          <Link href="/etats-des-lieux/nouveau" className="block">
-            <div className="bg-white rounded-xl shadow-sm p-6 flex items-start gap-4 hover:shadow transition-shadow h-full">
-              <div className="w-10 h-10 bg-[#2A9FD6]/10 rounded-lg flex items-center justify-center shrink-0">
-                <IconClipboard className="w-5 h-5 text-[#2A9FD6]" />
+            <div key={doc.title} className="border border-white/8 bg-white/3 hover:bg-white/5 hover:border-white/15 rounded-xl p-5 flex items-start gap-3 transition-all">
+              <div className="w-9 h-9 rounded-lg bg-[#2A9FD6]/15 flex items-center justify-center shrink-0">
+                <FileText className="w-4 h-4 text-[#2A9FD6]" />
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="font-medium text-[#1a1a1a] text-sm">État des lieux</h3>
-                <p className="text-xs text-gray-500 mt-0.5">Créer un état des lieux d&apos;entrée ou de sortie</p>
+                <h3 className="font-semibold text-white text-sm">{doc.title}</h3>
+                <p className="text-white/30 text-xs mt-0.5">{doc.description}</p>
               </div>
+            </div>
+          ))}
+          <Link href="/etats-des-lieux/nouveau" className="border border-white/8 bg-white/3 hover:bg-white/5 hover:border-white/15 rounded-xl p-5 flex items-start gap-3 transition-all">
+            <div className="w-9 h-9 rounded-lg bg-violet-500/15 flex items-center justify-center shrink-0">
+              <ClipboardList className="w-4 h-4 text-violet-400" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-white text-sm">État des lieux</h3>
+              <p className="text-white/30 text-xs mt-0.5">Créer un état d&apos;entrée ou de sortie</p>
             </div>
           </Link>
         </div>
