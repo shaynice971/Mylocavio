@@ -124,8 +124,8 @@ export default function NouveauBailPage() {
           </h2>
           <div className="space-y-4">
             <div>
-              <label className={labelClass}>Bien *</label>
-              <select required value={bienId} onChange={(e) => setBienId(e.target.value)} className={inputClass}>
+              <label className={labelClass} htmlFor="bien_id">Bien *</label>
+              <select id="bien_id" required value={bienId} onChange={(e) => setBienId(e.target.value)} className={inputClass}>
                 <option value="">Sélectionner un bien</option>
                 {biens.map((b) => (
                   <option key={b.id} value={b.id}>{b.adresse}, {b.ville}</option>
@@ -133,8 +133,8 @@ export default function NouveauBailPage() {
               </select>
             </div>
             <div>
-              <label className={labelClass}>Locataire *</label>
-              <select required value={locataireId} onChange={(e) => setLocataireId(e.target.value)} className={inputClass} disabled={!bienId}>
+              <label className={labelClass} htmlFor="locataire_id">Locataire *</label>
+              <select id="locataire_id" required value={locataireId} onChange={(e) => setLocataireId(e.target.value)} className={inputClass} disabled={!bienId}>
                 <option value="">
                   {bienId ? (locataires.length === 0 ? "Aucun locataire actif pour ce bien" : "Sélectionner un locataire") : "Sélectionnez d'abord un bien"}
                 </option>
@@ -167,8 +167,8 @@ export default function NouveauBailPage() {
           </div>
           {typeBail === "mobilite" && (
             <div className="mt-4 max-w-xs">
-              <label className={labelClass}>Durée (mois) *</label>
-              <input type="number" min={1} max={10} required value={dureesMobilite} onChange={(e) => setDureesMobilite(Number(e.target.value))} className={inputClass} />
+              <label className={labelClass} htmlFor="duree_mobilite">Durée (mois) *</label>
+              <input id="duree_mobilite" type="number" min={1} max={10} required value={dureesMobilite} onChange={(e) => setDureesMobilite(Number(e.target.value))} className={inputClass} />
             </div>
           )}
         </div>
@@ -178,27 +178,28 @@ export default function NouveauBailPage() {
           <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">Étape 3 — Conditions financières</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
-              <label className={labelClass}>Loyer mensuel HC (€) *</label>
-              <input type="number" min={0} required value={loyer} onChange={(e) => setLoyer(e.target.value)} className={inputClass} placeholder="800" />
+              <label className={labelClass} htmlFor="loyer_hc">Loyer mensuel HC (€) *</label>
+              <input id="loyer_hc" type="number" min={0} required value={loyer} onChange={(e) => setLoyer(e.target.value)} className={inputClass} placeholder="800" />
             </div>
             <div>
-              <label className={labelClass}>Provisions sur charges (€)</label>
-              <input type="number" min={0} value={charges} onChange={(e) => setCharges(e.target.value)} className={inputClass} placeholder="0" />
+              <label className={labelClass} htmlFor="charges">Provisions sur charges (€)</label>
+              <input id="charges" type="number" min={0} value={charges} onChange={(e) => setCharges(e.target.value)} className={inputClass} placeholder="0" />
             </div>
             <div>
-              <label className={labelClass}>Dépôt de garantie (€)</label>
-              <input type="number" min={0} value={depotGarantie} onChange={(e) => setDepotGarantie(e.target.value)} className={inputClass} placeholder="1600" />
+              <label className={labelClass} htmlFor="depot_garantie">Dépôt de garantie (€)</label>
+              <input id="depot_garantie" type="number" min={0} value={depotGarantie} onChange={(e) => setDepotGarantie(e.target.value)} className={inputClass} placeholder="1600" />
             </div>
             <div>
-              <label className={labelClass}>Date de début *</label>
-              <input type="date" required value={dateDebut} onChange={(e) => setDateDebut(e.target.value)} className={inputClass} />
+              <label className={labelClass} htmlFor="date_debut">Date de début *</label>
+              <input id="date_debut" type="date" required value={dateDebut} onChange={(e) => setDateDebut(e.target.value)} className={inputClass} />
             </div>
             <div className="md:col-span-2">
-              <label className={labelClass}>
+              <label className={labelClass} htmlFor="date_fin">
                 Date de fin
                 {typeBail !== "mobilite" && <span className="ml-1 text-gray-400 font-normal">(calculée automatiquement)</span>}
               </label>
               <input
+                id="date_fin"
                 type="date"
                 value={dateFin}
                 onChange={(e) => setDateFin(e.target.value)}

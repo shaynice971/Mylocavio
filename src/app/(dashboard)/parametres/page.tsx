@@ -223,7 +223,7 @@ export default function ParametresPage() {
                     <p className="text-xs text-gray-400 mt-0.5">{description}</p>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer shrink-0">
-                    <input type="checkbox" className="sr-only peer" defaultChecked />
+                    <input type="checkbox" className="sr-only peer" defaultChecked aria-label={label} />
                     <div className="w-10 h-5 bg-gray-200 rounded-full peer peer-checked:bg-[#2A9FD6] transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5" />
                   </label>
                 </div>

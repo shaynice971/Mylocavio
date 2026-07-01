@@ -103,28 +103,28 @@ export default function NouveauBienPage() {
         <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-5">Localisation</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
           <div className="md:col-span-2">
-            <label className={labelClass}>Adresse *</label>
-            <input name="adresse" type="text" required value={form.adresse} onChange={handleChange} className={inputClass} placeholder="12 rue de la Paix" />
+            <label className={labelClass} htmlFor="adresse">Adresse *</label>
+            <input id="adresse" name="adresse" type="text" required value={form.adresse} onChange={handleChange} className={inputClass} placeholder="12 rue de la Paix" />
           </div>
           <div className="md:col-span-2">
-            <label className={labelClass}>Complément d&apos;adresse</label>
-            <input name="complement_adresse" type="text" value={form.complement_adresse} onChange={handleChange} className={inputClass} placeholder="Bâtiment B, appartement 3" />
+            <label className={labelClass} htmlFor="complement_adresse">Complément d&apos;adresse</label>
+            <input id="complement_adresse" name="complement_adresse" type="text" value={form.complement_adresse} onChange={handleChange} className={inputClass} placeholder="Bâtiment B, appartement 3" />
           </div>
           <div>
-            <label className={labelClass}>Code postal *</label>
-            <input name="code_postal" type="text" required value={form.code_postal} onChange={handleChange} className={inputClass} placeholder="75001" />
+            <label className={labelClass} htmlFor="code_postal">Code postal *</label>
+            <input id="code_postal" name="code_postal" type="text" required value={form.code_postal} onChange={handleChange} className={inputClass} placeholder="75001" />
           </div>
           <div>
-            <label className={labelClass}>Ville *</label>
-            <input name="ville" type="text" required value={form.ville} onChange={handleChange} className={inputClass} placeholder="Paris" />
+            <label className={labelClass} htmlFor="ville">Ville *</label>
+            <input id="ville" name="ville" type="text" required value={form.ville} onChange={handleChange} className={inputClass} placeholder="Paris" />
           </div>
         </div>
 
         <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-5">Caractéristiques</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
           <div>
-            <label className={labelClass}>Type *</label>
-            <select name="type" required value={form.type} onChange={handleChange} className={inputClass}>
+            <label className={labelClass} htmlFor="type">Type *</label>
+            <select id="type" name="type" required value={form.type} onChange={handleChange} className={inputClass}>
               <option value="appartement">Appartement</option>
               <option value="maison">Maison</option>
               <option value="studio">Studio</option>
@@ -132,36 +132,36 @@ export default function NouveauBienPage() {
             </select>
           </div>
           <div>
-            <label className={labelClass}>Statut</label>
-            <select name="statut" value={form.statut} onChange={handleChange} className={inputClass}>
+            <label className={labelClass} htmlFor="statut">Statut</label>
+            <select id="statut" name="statut" value={form.statut} onChange={handleChange} className={inputClass}>
               <option value="vacant">Vacant</option>
               <option value="loue">Loué</option>
               <option value="travaux">Travaux</option>
             </select>
           </div>
           <div>
-            <label className={labelClass}>Surface (m²)</label>
-            <input name="surface" type="number" min="0" value={form.surface} onChange={handleChange} className={inputClass} placeholder="45" />
+            <label className={labelClass} htmlFor="surface">Surface (m²)</label>
+            <input id="surface" name="surface" type="number" min="0" value={form.surface} onChange={handleChange} className={inputClass} placeholder="45" />
           </div>
           <div>
-            <label className={labelClass}>Nombre de pièces</label>
-            <input name="nb_pieces" type="number" min="0" value={form.nb_pieces} onChange={handleChange} className={inputClass} placeholder="2" />
+            <label className={labelClass} htmlFor="nb_pieces">Nombre de pièces</label>
+            <input id="nb_pieces" name="nb_pieces" type="number" min="0" value={form.nb_pieces} onChange={handleChange} className={inputClass} placeholder="2" />
           </div>
         </div>
 
         <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-5">Finances</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className={labelClass}>Loyer hors charges (€) *</label>
-            <input name="loyer" type="number" min="0" required value={form.loyer} onChange={handleChange} className={inputClass} placeholder="800" />
+            <label className={labelClass} htmlFor="loyer">Loyer hors charges (€) *</label>
+            <input id="loyer" name="loyer" type="number" min="0" required value={form.loyer} onChange={handleChange} className={inputClass} placeholder="800" />
           </div>
           <div>
-            <label className={labelClass}>Charges (€)</label>
-            <input name="charges" type="number" min="0" value={form.charges} onChange={handleChange} className={inputClass} placeholder="0" />
+            <label className={labelClass} htmlFor="charges">Charges (€)</label>
+            <input id="charges" name="charges" type="number" min="0" value={form.charges} onChange={handleChange} className={inputClass} placeholder="0" />
           </div>
           <div>
-            <label className={labelClass}>Dépôt de garantie (€)</label>
-            <input name="depot_garantie" type="number" min="0" value={form.depot_garantie} onChange={handleChange} className={inputClass} placeholder="1600" />
+            <label className={labelClass} htmlFor="depot_garantie">Dépôt de garantie (€)</label>
+            <input id="depot_garantie" name="depot_garantie" type="number" min="0" value={form.depot_garantie} onChange={handleChange} className={inputClass} placeholder="1600" />
           </div>
         </div>
 

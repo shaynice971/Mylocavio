@@ -43,9 +43,11 @@ export default function BienDetailPage({ params }: { params: { id: string } }) {
     const { data: bienData } = await supabase.from("biens").select("*").eq("id", params.id).single();
     setBien(bienData);
     if (bienData) {
-      const { data: locData } = await supabase.from("locataires").select("*").eq("bien_id", params.id).eq("actif", true).maybeSingle();
+      const [{ data: locData }, { data: qData }] = await Promise.all([
+        supabase.from("locataires").select("*").eq("bien_id", params.id).eq("actif", true).maybeSingle(),
+        supabase.from("quittances").select("*").eq("bien_id", params.id).order("mois", { ascending: false }),
+      ]);
       setLocataire(locData);
-      const { data: qData } = await supabase.from("quittances").select("*").eq("bien_id", params.id).order("mois", { ascending: false });
       setQuittances(qData ?? []);
     }
     setLoading(false);
@@ -206,25 +208,25 @@ export default function BienDetailPage({ params }: { params: { id: string } }) {
                     )}
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className={labelClass}>Prénom *</label>
-                        <input type="text" required value={locForm.prenom} onChange={(e) => setLocForm((p) => ({ ...p, prenom: e.target.value }))} className={inputClass} />
+                        <label className={labelClass} htmlFor="loc_prenom">Prénom *</label>
+                        <input id="loc_prenom" type="text" required value={locForm.prenom} onChange={(e) => setLocForm((p) => ({ ...p, prenom: e.target.value }))} className={inputClass} />
                       </div>
                       <div>
-                        <label className={labelClass}>Nom *</label>
-                        <input type="text" required value={locForm.nom} onChange={(e) => setLocForm((p) => ({ ...p, nom: e.target.value }))} className={inputClass} />
+                        <label className={labelClass} htmlFor="loc_nom">Nom *</label>
+                        <input id="loc_nom" type="text" required value={locForm.nom} onChange={(e) => setLocForm((p) => ({ ...p, nom: e.target.value }))} className={inputClass} />
                       </div>
                     </div>
                     <div>
-                      <label className={labelClass}>Email</label>
-                      <input type="email" value={locForm.email} onChange={(e) => setLocForm((p) => ({ ...p, email: e.target.value }))} className={inputClass} />
+                      <label className={labelClass} htmlFor="loc_email">Email</label>
+                      <input id="loc_email" type="email" value={locForm.email} onChange={(e) => setLocForm((p) => ({ ...p, email: e.target.value }))} className={inputClass} />
                     </div>
                     <div>
-                      <label className={labelClass}>Téléphone</label>
-                      <input type="tel" value={locForm.telephone} onChange={(e) => setLocForm((p) => ({ ...p, telephone: e.target.value }))} className={inputClass} />
+                      <label className={labelClass} htmlFor="loc_telephone">Téléphone</label>
+                      <input id="loc_telephone" type="tel" value={locForm.telephone} onChange={(e) => setLocForm((p) => ({ ...p, telephone: e.target.value }))} className={inputClass} />
                     </div>
                     <div>
-                      <label className={labelClass}>Date d&apos;entrée *</label>
-                      <input type="date" required value={locForm.date_entree} onChange={(e) => setLocForm((p) => ({ ...p, date_entree: e.target.value }))} className={inputClass} />
+                      <label className={labelClass} htmlFor="loc_date_entree">Date d&apos;entrée *</label>
+                      <input id="loc_date_entree" type="date" required value={locForm.date_entree} onChange={(e) => setLocForm((p) => ({ ...p, date_entree: e.target.value }))} className={inputClass} />
                     </div>
                     <div className="flex items-center gap-3 pt-1">
                       <button type="submit" disabled={locLoading} className="bg-[#2A9FD6] hover:bg-[#238bbf] disabled:opacity-60 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors">

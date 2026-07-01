@@ -78,16 +78,16 @@ export default function RevisionIrlPage({ params }: { params: { id: string } }) 
 
         <div className="space-y-4">
           <div>
-            <label className={labelClass}>Loyer actuel HC (€)</label>
-            <input type="number" min={0} step="0.01" value={loyerActuel} onChange={(e) => setLoyerActuel(e.target.value)} className={inputClass} placeholder={bienLoyer ? String(bienLoyer) : "ex: 800"} />
+            <label className={labelClass} htmlFor="loyer_actuel">Loyer actuel HC (€)</label>
+            <input id="loyer_actuel" type="number" min={0} step="0.01" value={loyerActuel} onChange={(e) => setLoyerActuel(e.target.value)} className={inputClass} placeholder={bienLoyer ? String(bienLoyer) : "ex: 800"} />
           </div>
           <div>
-            <label className={labelClass}>IRL de référence (trimestre de signature du bail)</label>
-            <input type="number" step="0.01" value={irlRef} onChange={(e) => setIrlRef(e.target.value)} className={inputClass} placeholder="ex: 143.46" />
+            <label className={labelClass} htmlFor="irl_ref">IRL de référence (trimestre de signature du bail)</label>
+            <input id="irl_ref" type="number" step="0.01" value={irlRef} onChange={(e) => setIrlRef(e.target.value)} className={inputClass} placeholder="ex: 143.46" />
           </div>
           <div>
-            <label className={labelClass}>IRL du nouveau trimestre</label>
-            <input type="number" step="0.01" value={irlNouv} onChange={(e) => setIrlNouv(e.target.value)} className={inputClass} placeholder="ex: 147.22" />
+            <label className={labelClass} htmlFor="irl_nouv">IRL du nouveau trimestre</label>
+            <input id="irl_nouv" type="number" step="0.01" value={irlNouv} onChange={(e) => setIrlNouv(e.target.value)} className={inputClass} placeholder="ex: 147.22" />
           </div>
           <p className="text-xs text-gray-400">
             L&apos;IRL est publié trimestriellement par l&apos;INSEE. Consultez{" "}
