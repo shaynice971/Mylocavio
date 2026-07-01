@@ -23,7 +23,7 @@ export default function RelanceButton({ relanceId }: Props) {
 
   if (done) {
     return (
-      <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-400">
+      <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-700">
         <CheckCircle className="w-3.5 h-3.5" />
         Relancé
       </span>

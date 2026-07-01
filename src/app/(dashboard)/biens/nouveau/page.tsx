@@ -6,8 +6,8 @@ import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-const inputClass = "w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-[#2A9FD6]/50 focus:border-[#2A9FD6]/50 transition-all";
-const labelClass = "block text-sm font-medium text-white/50 mb-1.5";
+const inputClass = "w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2A9FD6]/50 focus:border-[#2A9FD6]/50 transition-all";
+const labelClass = "block text-sm font-medium text-gray-500 mb-1.5";
 
 export default function NouveauBienPage() {
   const router = useRouter();
@@ -79,22 +79,22 @@ export default function NouveauBienPage() {
   return (
     <div>
       <div className="mb-8">
-        <Link href="/biens" className="inline-flex items-center gap-1.5 text-sm text-white/40 hover:text-white/70 mb-5 transition-colors">
+        <Link href="/biens" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-600 mb-5 transition-colors">
           <ArrowLeft className="w-4 h-4" />
           Retour aux biens
         </Link>
-        <h1 className="text-2xl font-black text-white">Ajouter un bien</h1>
-        <p className="text-white/40 mt-1 text-sm">Renseignez les informations de votre logement.</p>
+        <h1 className="text-2xl font-black text-gray-900">Ajouter un bien</h1>
+        <p className="text-gray-500 mt-1 text-sm">Renseignez les informations de votre logement.</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="border border-white/8 bg-white/3 rounded-2xl p-8 max-w-2xl">
+      <form onSubmit={handleSubmit} className="border border-gray-200 bg-white shadow-sm rounded-2xl p-8 max-w-2xl">
         {error && (
-          <div className="mb-6 px-4 py-3 bg-rose-500/15 border border-rose-500/20 text-rose-400 text-sm rounded-xl">
+          <div className="mb-6 px-4 py-3 bg-rose-50 border border-rose-200 text-rose-700 text-sm rounded-xl">
             {error}
           </div>
         )}
 
-        <h2 className="text-sm font-bold text-white/50 uppercase tracking-wider mb-5">Localisation</h2>
+        <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-5">Localisation</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
           <div className="md:col-span-2">
             <label className={labelClass}>Adresse *</label>
@@ -114,7 +114,7 @@ export default function NouveauBienPage() {
           </div>
         </div>
 
-        <h2 className="text-sm font-bold text-white/50 uppercase tracking-wider mb-5">Caractéristiques</h2>
+        <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-5">Caractéristiques</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
           <div>
             <label className={labelClass}>Type *</label>
@@ -143,7 +143,7 @@ export default function NouveauBienPage() {
           </div>
         </div>
 
-        <h2 className="text-sm font-bold text-white/50 uppercase tracking-wider mb-5">Finances</h2>
+        <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-5">Finances</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className={labelClass}>Loyer hors charges (€) *</label>
@@ -159,7 +159,7 @@ export default function NouveauBienPage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-4 mt-8 pt-6 border-t border-white/5">
+        <div className="flex items-center gap-4 mt-8 pt-6 border-t border-gray-100">
           <button
             type="submit"
             disabled={loading}
@@ -167,7 +167,7 @@ export default function NouveauBienPage() {
           >
             {loading ? "Enregistrement..." : "Ajouter le bien"}
           </button>
-          <Link href="/biens" className="text-sm text-white/30 hover:text-white/60 transition-colors">
+          <Link href="/biens" className="text-sm text-gray-400 hover:text-gray-500 transition-colors">
             Annuler
           </Link>
         </div>

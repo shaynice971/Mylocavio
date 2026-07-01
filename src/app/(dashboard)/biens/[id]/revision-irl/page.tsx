@@ -5,8 +5,8 @@ import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { ArrowLeft, TrendingUp, CheckCircle } from "lucide-react";
 
-const inputClass = "w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-[#2A9FD6]/50 focus:border-[#2A9FD6]/50 transition-all";
-const labelClass = "block text-sm font-medium text-white/50 mb-1.5";
+const inputClass = "w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2A9FD6]/50 focus:border-[#2A9FD6]/50 transition-all";
+const labelClass = "block text-sm font-medium text-gray-500 mb-1.5";
 
 export default function RevisionIrlPage({ params }: { params: { id: string } }) {
   const [bienLoyer, setBienLoyer] = useState<number | null>(null);
@@ -57,22 +57,22 @@ export default function RevisionIrlPage({ params }: { params: { id: string } }) 
   return (
     <div>
       <div className="mb-8">
-        <Link href={`/biens/${params.id}`} className="inline-flex items-center gap-1.5 text-sm text-white/40 hover:text-white/70 mb-4 transition-colors">
+        <Link href={`/biens/${params.id}`} className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-600 mb-4 transition-colors">
           <ArrowLeft className="w-4 h-4" />
           Retour au bien{bienAdresse ? ` — ${bienAdresse}` : ""}
         </Link>
-        <h1 className="text-2xl font-black text-white">Révision annuelle du loyer</h1>
-        <p className="text-white/40 mt-1 text-sm">Calculez le nouveau loyer selon l&apos;Indice de Référence des Loyers (IRL) publié par l&apos;INSEE</p>
+        <h1 className="text-2xl font-black text-gray-900">Révision annuelle du loyer</h1>
+        <p className="text-gray-500 mt-1 text-sm">Calculez le nouveau loyer selon l&apos;Indice de Référence des Loyers (IRL) publié par l&apos;INSEE</p>
       </div>
 
-      <div className="border border-white/8 bg-white/3 rounded-2xl p-6 max-w-xl">
+      <div className="border border-gray-200 bg-white shadow-sm rounded-2xl p-6 max-w-xl">
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-9 h-9 rounded-xl bg-emerald-500/15 flex items-center justify-center">
-            <TrendingUp className="w-4 h-4 text-emerald-400" />
+          <div className="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center">
+            <TrendingUp className="w-4 h-4 text-emerald-700" />
           </div>
           <div>
-            <p className="font-semibold text-white text-sm">Calcul IRL</p>
-            <p className="text-white/35 text-xs">Nouveau loyer = loyer × (IRL nouveau / IRL référence)</p>
+            <p className="font-semibold text-gray-900 text-sm">Calcul IRL</p>
+            <p className="text-gray-400 text-xs">Nouveau loyer = loyer × (IRL nouveau / IRL référence)</p>
           </div>
         </div>
 
@@ -89,7 +89,7 @@ export default function RevisionIrlPage({ params }: { params: { id: string } }) 
             <label className={labelClass}>IRL du nouveau trimestre</label>
             <input type="number" step="0.01" value={irlNouv} onChange={(e) => setIrlNouv(e.target.value)} className={inputClass} placeholder="ex: 147.22" />
           </div>
-          <p className="text-xs text-white/25">
+          <p className="text-xs text-gray-400">
             L&apos;IRL est publié trimestriellement par l&apos;INSEE. Consultez{" "}
             <a href="https://www.insee.fr" target="_blank" rel="noopener noreferrer" className="text-[#2A9FD6] hover:text-[#5bb8e8] transition-colors">
               insee.fr
@@ -99,37 +99,37 @@ export default function RevisionIrlPage({ params }: { params: { id: string } }) 
         </div>
 
         {result && (
-          <div className="mt-6 pt-6 border-t border-white/8">
-            <p className="text-xs text-white/25 mb-4 font-mono">
+          <div className="mt-6 pt-6 border-t border-gray-200">
+            <p className="text-xs text-gray-400 mb-4 font-mono">
               {loyerActuel} × ({irlNouv} / {irlRef}) =
             </p>
             <div className="space-y-3 mb-6">
               <div>
-                <p className="text-xs text-white/40 mb-1">Nouveau loyer HC</p>
+                <p className="text-xs text-gray-500 mb-1">Nouveau loyer HC</p>
                 <p className="text-3xl font-black text-[#2A9FD6]">
                   {result.nouveauLoyer.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €
                 </p>
               </div>
-              <p className="text-sm text-white/50">
+              <p className="text-sm text-gray-500">
                 Augmentation :{" "}
-                <span className="font-semibold text-white">
+                <span className="font-semibold text-gray-900">
                   +{result.augmentation.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} € / mois
                 </span>{" "}
-                <span className="text-emerald-400">
+                <span className="text-emerald-700">
                   (+{result.pourcentage.toLocaleString("fr-FR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%)
                 </span>
               </p>
             </div>
 
             {applySuccess ? (
-              <div className="flex items-center gap-2 px-4 py-3 bg-emerald-500/15 border border-emerald-500/20 text-emerald-400 text-sm rounded-xl">
+              <div className="flex items-center gap-2 px-4 py-3 bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm rounded-xl">
                 <CheckCircle className="w-4 h-4" />
                 Le loyer a été mis à jour avec succès.
               </div>
             ) : (
               <>
                 {applyError && (
-                  <div className="mb-3 px-4 py-3 bg-rose-500/15 border border-rose-500/20 text-rose-400 text-sm rounded-xl">{applyError}</div>
+                  <div className="mb-3 px-4 py-3 bg-rose-50 border border-rose-200 text-rose-700 text-sm rounded-xl">{applyError}</div>
                 )}
                 <button onClick={handleApply} disabled={applyLoading} className="bg-[#2A9FD6] hover:bg-[#238bbf] disabled:opacity-60 text-white text-sm font-bold px-6 py-2.5 rounded-xl transition-all hover:shadow-lg hover:shadow-[#2A9FD6]/25">
                   {applyLoading ? "Mise à jour..." : "Appliquer ce loyer"}

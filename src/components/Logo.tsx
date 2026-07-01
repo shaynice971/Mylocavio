@@ -8,7 +8,7 @@ export default function Logo({ className, dark }: { className?: string; dark?: b
         <line x1="19.5" y1="24.5" x2="22" y2="22" stroke="#2A9FD6" strokeWidth="2" strokeLinecap="round" />
         <line x1="24.5" y1="24.5" x2="26" y2="23" stroke="#2A9FD6" strokeWidth="2" strokeLinecap="round" />
       </svg>
-      <span className={`text-xl font-bold ${dark ? "text-white" : "text-[#1a1a1a]"}`}>
+      <span className={`text-xl font-bold ${dark ? "text-gray-900" : "text-[#1a1a1a]"}`}>
         myloca<span className="text-[#FF6B35]">vio</span>
       </span>
     </span>

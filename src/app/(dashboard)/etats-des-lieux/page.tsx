@@ -28,8 +28,8 @@ export default async function EtatsDesLieuxPage() {
     <div>
       <div className="mb-8 flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-black text-white">États des lieux</h1>
-          <p className="text-white/40 mt-1 text-sm">Gérez vos états des lieux d&apos;entrée et de sortie.</p>
+          <h1 className="text-2xl font-black text-gray-900">États des lieux</h1>
+          <p className="text-gray-500 mt-1 text-sm">Gérez vos états des lieux d&apos;entrée et de sortie.</p>
         </div>
         <Link
           href="/etats-des-lieux/nouveau"
@@ -41,12 +41,12 @@ export default async function EtatsDesLieuxPage() {
       </div>
 
       {etats.length === 0 ? (
-        <div className="border border-white/8 bg-white/3 rounded-2xl p-16 text-center">
-          <div className="w-14 h-14 rounded-2xl bg-violet-500/15 flex items-center justify-center mx-auto mb-5">
-            <ClipboardList className="w-7 h-7 text-violet-400" />
+        <div className="border border-gray-200 bg-white shadow-sm rounded-2xl p-16 text-center">
+          <div className="w-14 h-14 rounded-2xl bg-violet-50 flex items-center justify-center mx-auto mb-5">
+            <ClipboardList className="w-7 h-7 text-violet-700" />
           </div>
-          <h2 className="text-white font-bold text-lg">Aucun état des lieux</h2>
-          <p className="text-white/35 text-sm mt-2 mb-8 max-w-xs mx-auto">
+          <h2 className="text-gray-900 font-bold text-lg">Aucun état des lieux</h2>
+          <p className="text-gray-400 text-sm mt-2 mb-8 max-w-xs mx-auto">
             Créez votre premier état des lieux d&apos;entrée ou de sortie.
           </p>
           <Link
@@ -58,14 +58,14 @@ export default async function EtatsDesLieuxPage() {
           </Link>
         </div>
       ) : (
-        <div className="border border-white/8 rounded-2xl overflow-hidden">
+        <div className="border border-gray-200 rounded-2xl overflow-hidden">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-white/5 bg-white/3">
-                <th className="text-left px-6 py-4 font-semibold text-white/30 text-xs tracking-wide uppercase">Date</th>
-                <th className="text-left px-6 py-4 font-semibold text-white/30 text-xs tracking-wide uppercase">Bien</th>
-                <th className="text-left px-6 py-4 font-semibold text-white/30 text-xs tracking-wide uppercase">Locataire</th>
-                <th className="text-left px-6 py-4 font-semibold text-white/30 text-xs tracking-wide uppercase">Type</th>
+              <tr className="border-b border-gray-100 bg-white">
+                <th className="text-left px-6 py-4 font-semibold text-gray-400 text-xs tracking-wide uppercase">Date</th>
+                <th className="text-left px-6 py-4 font-semibold text-gray-400 text-xs tracking-wide uppercase">Bien</th>
+                <th className="text-left px-6 py-4 font-semibold text-gray-400 text-xs tracking-wide uppercase">Locataire</th>
+                <th className="text-left px-6 py-4 font-semibold text-gray-400 text-xs tracking-wide uppercase">Type</th>
                 <th className="text-right px-6 py-4" />
               </tr>
             </thead>
@@ -75,15 +75,15 @@ export default async function EtatsDesLieuxPage() {
                 const locataire = Array.isArray(etat.locataires) ? etat.locataires[0] : etat.locataires;
                 const isEntree = etat.type === "entree";
                 return (
-                  <tr key={etat.id} className="border-b border-white/5 hover:bg-white/3 transition-colors">
-                    <td className="px-6 py-4 text-white/60">{new Date(etat.date_etat).toLocaleDateString("fr-FR")}</td>
-                    <td className="px-6 py-4 font-semibold text-white">{bien ? `${bien.adresse}, ${bien.ville}` : "—"}</td>
-                    <td className="px-6 py-4 text-white/50">{locataire ? `${locataire.prenom} ${locataire.nom}` : "—"}</td>
+                  <tr key={etat.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 text-gray-500">{new Date(etat.date_etat).toLocaleDateString("fr-FR")}</td>
+                    <td className="px-6 py-4 font-semibold text-gray-900">{bien ? `${bien.adresse}, ${bien.ville}` : "—"}</td>
+                    <td className="px-6 py-4 text-gray-500">{locataire ? `${locataire.prenom} ${locataire.nom}` : "—"}</td>
                     <td className="px-6 py-4">
                       <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold border ${
                         isEntree
-                          ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/20"
-                          : "bg-amber-500/15 text-amber-400 border-amber-500/20"
+                          ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                          : "bg-amber-50 text-amber-700 border-amber-200"
                       }`}>
                         {isEntree ? "Entrée" : "Sortie"}
                       </span>

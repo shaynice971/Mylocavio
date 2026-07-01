@@ -22,8 +22,8 @@ const typeLabels: Record<string, string> = {
   autre: "Autre",
 };
 
-const inputClass = "w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-[#2A9FD6]/50 focus:border-[#2A9FD6]/50 transition-all";
-const labelClass = "block text-sm font-medium text-white/50 mb-1.5";
+const inputClass = "w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2A9FD6]/50 focus:border-[#2A9FD6]/50 transition-all";
+const labelClass = "block text-sm font-medium text-gray-500 mb-1.5";
 
 export default function BienDetailPage({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -88,7 +88,7 @@ export default function BienDetailPage({ params }: { params: { id: string } }) {
   if (!bien) {
     return (
       <div className="text-center p-12">
-        <p className="text-white/40 text-sm">Bien introuvable.</p>
+        <p className="text-gray-500 text-sm">Bien introuvable.</p>
         <Link href="/biens" className="text-[#2A9FD6] text-sm mt-2 inline-block hover:text-[#5bb8e8] transition-colors">
           ← Retour aux biens
         </Link>
@@ -99,18 +99,18 @@ export default function BienDetailPage({ params }: { params: { id: string } }) {
   return (
     <div>
       <div className="mb-6">
-        <Link href="/biens" className="inline-flex items-center gap-1.5 text-sm text-white/40 hover:text-white/70 mb-4 transition-colors">
+        <Link href="/biens" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-600 mb-4 transition-colors">
           <ArrowLeft className="w-4 h-4" />
           Retour aux biens
         </Link>
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-2xl font-black text-white">{String(bien.adresse)}</h1>
-            <p className="text-white/40 text-sm mt-1">{String(bien.code_postal)} {String(bien.ville)}</p>
+            <h1 className="text-2xl font-black text-gray-900">{String(bien.adresse)}</h1>
+            <p className="text-gray-500 text-sm mt-1">{String(bien.code_postal)} {String(bien.ville)}</p>
           </div>
           <Link
             href={`/biens/${params.id}/modifier`}
-            className="inline-flex items-center gap-1.5 text-sm text-white/50 hover:text-white border border-white/10 hover:border-white/20 px-3 py-2 rounded-xl transition-all"
+            className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 border border-gray-200 hover:border-gray-200 px-3 py-2 rounded-xl transition-all"
           >
             <Pencil className="w-4 h-4" />
             Modifier
@@ -119,7 +119,7 @@ export default function BienDetailPage({ params }: { params: { id: string } }) {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 border-b border-white/8 mb-6">
+      <div className="flex gap-1 border-b border-gray-200 mb-6">
         {tabs.map(({ id, label, icon: Icon }) => (
           <button
             key={id}
@@ -128,7 +128,7 @@ export default function BienDetailPage({ params }: { params: { id: string } }) {
               "flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-all",
               activeTab === id
                 ? "border-[#2A9FD6] text-[#2A9FD6]"
-                : "border-transparent text-white/40 hover:text-white/70"
+                : "border-transparent text-gray-500 hover:text-gray-600"
             )}
           >
             <Icon className="w-4 h-4" />
@@ -140,8 +140,8 @@ export default function BienDetailPage({ params }: { params: { id: string } }) {
       {activeTab === "informations" && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Bien info */}
-          <div className="border border-white/8 bg-white/3 rounded-2xl p-6">
-            <h2 className="font-semibold text-white mb-4 flex items-center gap-2">
+          <div className="border border-gray-200 bg-white shadow-sm rounded-2xl p-6">
+            <h2 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
               <div className="w-7 h-7 rounded-lg bg-[#2A9FD6]/15 flex items-center justify-center">
                 <Home className="w-3.5 h-3.5 text-[#2A9FD6]" />
               </div>
@@ -156,19 +156,19 @@ export default function BienDetailPage({ params }: { params: { id: string } }) {
                 ["Charges", `${Number(bien.charges ?? 0).toLocaleString("fr-FR")} €`],
                 ["Dépôt de garantie", bien.depot_garantie ? `${Number(bien.depot_garantie).toLocaleString("fr-FR")} €` : "—"],
               ].map(([label, value]) => (
-                <div key={label} className="flex justify-between py-2 border-b border-white/5 last:border-0">
-                  <dt className="text-white/40">{label}</dt>
-                  <dd className="font-medium text-white">{value}</dd>
+                <div key={label} className="flex justify-between py-2 border-b border-gray-100 last:border-0">
+                  <dt className="text-gray-500">{label}</dt>
+                  <dd className="font-medium text-gray-900">{value}</dd>
                 </div>
               ))}
             </dl>
           </div>
 
           {/* Locataire */}
-          <div className="border border-white/8 bg-white/3 rounded-2xl p-6">
-            <h2 className="font-semibold text-white mb-4 flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-violet-500/15 flex items-center justify-center">
-                <User className="w-3.5 h-3.5 text-violet-400" />
+          <div className="border border-gray-200 bg-white shadow-sm rounded-2xl p-6">
+            <h2 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <div className="w-7 h-7 rounded-lg bg-violet-50 flex items-center justify-center">
+                <User className="w-3.5 h-3.5 text-violet-700" />
               </div>
               Locataire
             </h2>
@@ -180,15 +180,15 @@ export default function BienDetailPage({ params }: { params: { id: string } }) {
                   ["Téléphone", locataire.telephone ?? "—"],
                   ["Date d'entrée", new Date(String(locataire.date_entree)).toLocaleDateString("fr-FR")],
                 ] as [string, string][]).map(([label, value]) => (
-                  <div key={label} className="flex justify-between py-2 border-b border-white/5 last:border-0">
-                    <dt className="text-white/40">{label}</dt>
-                    <dd className="font-medium text-white">{String(value)}</dd>
+                  <div key={label} className="flex justify-between py-2 border-b border-gray-100 last:border-0">
+                    <dt className="text-gray-500">{label}</dt>
+                    <dd className="font-medium text-gray-900">{String(value)}</dd>
                   </div>
                 ))}
               </dl>
             ) : (
               <div>
-                <p className="text-sm text-white/30 mb-4">Aucun locataire actif.</p>
+                <p className="text-sm text-gray-400 mb-4">Aucun locataire actif.</p>
                 {!showLocataireForm ? (
                   <button
                     onClick={() => setShowLocataireForm(true)}
@@ -200,7 +200,7 @@ export default function BienDetailPage({ params }: { params: { id: string } }) {
                 ) : (
                   <form onSubmit={handleLocataireSubmit} className="space-y-3">
                     {locError && (
-                      <div className="px-3 py-2 bg-rose-500/15 border border-rose-500/20 text-rose-400 text-xs rounded-xl">
+                      <div className="px-3 py-2 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl">
                         {locError}
                       </div>
                     )}
@@ -230,7 +230,7 @@ export default function BienDetailPage({ params }: { params: { id: string } }) {
                       <button type="submit" disabled={locLoading} className="bg-[#2A9FD6] hover:bg-[#238bbf] disabled:opacity-60 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors">
                         {locLoading ? "Enregistrement..." : "Ajouter"}
                       </button>
-                      <button type="button" onClick={() => { setShowLocataireForm(false); setLocError(null); }} className="text-sm text-white/40 hover:text-white/70 transition-colors">
+                      <button type="button" onClick={() => { setShowLocataireForm(false); setLocError(null); }} className="text-sm text-gray-500 hover:text-gray-600 transition-colors">
                         Annuler
                       </button>
                     </div>
@@ -244,15 +244,15 @@ export default function BienDetailPage({ params }: { params: { id: string } }) {
           <div className="lg:col-span-2">
             <Link
               href={`/biens/${params.id}/revision-irl`}
-              className="border border-white/8 bg-white/3 hover:bg-white/5 hover:border-white/15 rounded-2xl p-5 flex items-center justify-between transition-all group"
+              className="border border-gray-200 bg-white hover:bg-gray-50 hover:border-gray-300 shadow-sm rounded-2xl p-5 flex items-center justify-between transition-all group"
             >
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-emerald-500/15 rounded-xl flex items-center justify-center shrink-0">
-                  <TrendingUp className="w-5 h-5 text-emerald-400" />
+                <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center shrink-0">
+                  <TrendingUp className="w-5 h-5 text-emerald-700" />
                 </div>
                 <div>
-                  <p className="font-semibold text-sm text-white">Révision annuelle du loyer (IRL)</p>
-                  <p className="text-xs text-white/35 mt-0.5">Recalculez le loyer selon l&apos;indice INSEE</p>
+                  <p className="font-semibold text-sm text-gray-900">Révision annuelle du loyer (IRL)</p>
+                  <p className="text-xs text-gray-400 mt-0.5">Recalculez le loyer selon l&apos;indice INSEE</p>
                 </div>
               </div>
               <span className="text-sm font-semibold text-[#2A9FD6] group-hover:text-[#5bb8e8] transition-colors">
@@ -264,33 +264,33 @@ export default function BienDetailPage({ params }: { params: { id: string } }) {
       )}
 
       {activeTab === "quittances" && (
-        <div className="border border-white/8 rounded-2xl overflow-hidden">
+        <div className="border border-gray-200 rounded-2xl overflow-hidden">
           {quittances.length === 0 ? (
             <div className="p-12 text-center">
-              <div className="w-12 h-12 rounded-2xl bg-violet-500/15 flex items-center justify-center mx-auto mb-4">
-                <FileText className="w-6 h-6 text-violet-400" />
+              <div className="w-12 h-12 rounded-2xl bg-violet-50 flex items-center justify-center mx-auto mb-4">
+                <FileText className="w-6 h-6 text-violet-700" />
               </div>
-              <p className="text-white/40 text-sm">Aucune quittance pour ce bien.</p>
+              <p className="text-gray-500 text-sm">Aucune quittance pour ce bien.</p>
             </div>
           ) : (
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-white/5 bg-white/3">
-                  <th className="text-left px-6 py-4 font-semibold text-white/30 text-xs tracking-wide uppercase">Mois</th>
-                  <th className="text-left px-6 py-4 font-semibold text-white/30 text-xs tracking-wide uppercase">Montant</th>
-                  <th className="text-left px-6 py-4 font-semibold text-white/30 text-xs tracking-wide uppercase">Statut</th>
+                <tr className="border-b border-gray-100 bg-white">
+                  <th className="text-left px-6 py-4 font-semibold text-gray-400 text-xs tracking-wide uppercase">Mois</th>
+                  <th className="text-left px-6 py-4 font-semibold text-gray-400 text-xs tracking-wide uppercase">Montant</th>
+                  <th className="text-left px-6 py-4 font-semibold text-gray-400 text-xs tracking-wide uppercase">Statut</th>
                   <th className="w-20" />
                 </tr>
               </thead>
               <tbody>
                 {quittances.map((q) => (
-                  <tr key={String(q.id)} className="border-b border-white/5 hover:bg-white/3 transition-colors">
-                    <td className="px-6 py-4 text-white/60 capitalize">
+                  <tr key={String(q.id)} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 text-gray-500 capitalize">
                       {new Date(String(q.mois)).toLocaleDateString("fr-FR", { month: "long", year: "numeric" })}
                     </td>
-                    <td className="px-6 py-4 font-bold text-white">{Number(q.total).toLocaleString("fr-FR")} €</td>
+                    <td className="px-6 py-4 font-bold text-gray-900">{Number(q.total).toLocaleString("fr-FR")} €</td>
                     <td className="px-6 py-4">
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-blue-500/15 text-blue-400 border border-blue-500/20">
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
                         {String(q.statut)}
                       </span>
                     </td>
@@ -309,11 +309,11 @@ export default function BienDetailPage({ params }: { params: { id: string } }) {
       )}
 
       {activeTab === "documents" && (
-        <div className="border border-white/8 bg-white/3 rounded-2xl p-12 text-center">
-          <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center mx-auto mb-4">
-            <FolderOpen className="w-6 h-6 text-white/20" />
+        <div className="border border-gray-200 bg-white shadow-sm rounded-2xl p-12 text-center">
+          <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center mx-auto mb-4">
+            <FolderOpen className="w-6 h-6 text-gray-300" />
           </div>
-          <p className="text-white/40 text-sm">Aucun document pour ce bien.</p>
+          <p className="text-gray-500 text-sm">Aucun document pour ce bien.</p>
         </div>
       )}
     </div>

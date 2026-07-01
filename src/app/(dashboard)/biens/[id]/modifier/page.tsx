@@ -6,9 +6,9 @@ import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-const inputClass = "w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-[#2A9FD6]/50 focus:border-[#2A9FD6]/50 transition-all";
-const labelClass = "block text-sm font-medium text-white/50 mb-1.5";
-const sectionClass = "text-sm font-bold text-white/50 uppercase tracking-wider mb-4";
+const inputClass = "w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2A9FD6]/50 focus:border-[#2A9FD6]/50 transition-all";
+const labelClass = "block text-sm font-medium text-gray-500 mb-1.5";
+const sectionClass = "text-sm font-bold text-gray-500 uppercase tracking-wider mb-4";
 
 interface FormState {
   adresse: string;
@@ -99,22 +99,22 @@ export default function ModifierBienPage({ params }: { params: { id: string } })
   return (
     <div>
       <div className="mb-8">
-        <Link href={`/biens/${params.id}`} className="inline-flex items-center gap-1.5 text-sm text-white/40 hover:text-white/70 mb-4 transition-colors">
+        <Link href={`/biens/${params.id}`} className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-600 mb-4 transition-colors">
           <ArrowLeft className="w-4 h-4" />
           Retour au bien
         </Link>
-        <h1 className="text-2xl font-black text-white">Modifier le bien</h1>
-        <p className="text-white/40 mt-1 text-sm">Mettez à jour les informations de votre bien.</p>
+        <h1 className="text-2xl font-black text-gray-900">Modifier le bien</h1>
+        <p className="text-gray-500 mt-1 text-sm">Mettez à jour les informations de votre bien.</p>
       </div>
 
       <form onSubmit={handleSubmit} className="max-w-2xl space-y-8">
         {error && (
-          <div className="px-4 py-3 bg-rose-500/15 border border-rose-500/20 text-rose-400 text-sm rounded-xl">
+          <div className="px-4 py-3 bg-rose-50 border border-rose-200 text-rose-700 text-sm rounded-xl">
             {error}
           </div>
         )}
 
-        <div className="border border-white/8 bg-white/3 rounded-2xl p-6">
+        <div className="border border-gray-200 bg-white shadow-sm rounded-2xl p-6">
           <h2 className={sectionClass}>Localisation</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className="md:col-span-2">
@@ -136,7 +136,7 @@ export default function ModifierBienPage({ params }: { params: { id: string } })
           </div>
         </div>
 
-        <div className="border border-white/8 bg-white/3 rounded-2xl p-6">
+        <div className="border border-gray-200 bg-white shadow-sm rounded-2xl p-6">
           <h2 className={sectionClass}>Caractéristiques</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
@@ -167,7 +167,7 @@ export default function ModifierBienPage({ params }: { params: { id: string } })
           </div>
         </div>
 
-        <div className="border border-white/8 bg-white/3 rounded-2xl p-6">
+        <div className="border border-gray-200 bg-white shadow-sm rounded-2xl p-6">
           <h2 className={sectionClass}>Finances</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
@@ -189,16 +189,16 @@ export default function ModifierBienPage({ params }: { params: { id: string } })
           <button type="submit" disabled={loading} className="bg-[#2A9FD6] hover:bg-[#238bbf] disabled:opacity-60 text-white text-sm font-bold px-6 py-2.5 rounded-xl transition-all hover:shadow-lg hover:shadow-[#2A9FD6]/25">
             {loading ? "Enregistrement..." : "Enregistrer les modifications"}
           </button>
-          <Link href={`/biens/${params.id}`} className="text-sm text-white/40 hover:text-white/70 transition-colors">
+          <Link href={`/biens/${params.id}`} className="text-sm text-gray-500 hover:text-gray-600 transition-colors">
             Annuler
           </Link>
         </div>
       </form>
 
       {/* Danger zone */}
-      <div className="mt-10 max-w-2xl border border-rose-500/20 bg-rose-500/5 rounded-2xl p-6">
-        <h3 className="text-sm font-bold text-rose-400 mb-2">Zone dangereuse</h3>
-        <p className="text-sm text-white/30 mb-5">
+      <div className="mt-10 max-w-2xl border border-rose-200 bg-rose-500/5 rounded-2xl p-6">
+        <h3 className="text-sm font-bold text-rose-700 mb-2">Zone dangereuse</h3>
+        <p className="text-sm text-gray-400 mb-5">
           La suppression de ce bien est irréversible. Toutes les données associées seront supprimées.
         </p>
         {deleteConfirm ? (
@@ -206,12 +206,12 @@ export default function ModifierBienPage({ params }: { params: { id: string } })
             <button type="button" onClick={handleDelete} disabled={loading} className="bg-rose-500 hover:bg-rose-600 disabled:opacity-60 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition-colors">
               {loading ? "Suppression..." : "Confirmer la suppression"}
             </button>
-            <button type="button" onClick={() => setDeleteConfirm(false)} className="text-sm text-white/40 hover:text-white/70 transition-colors">
+            <button type="button" onClick={() => setDeleteConfirm(false)} className="text-sm text-gray-500 hover:text-gray-600 transition-colors">
               Annuler
             </button>
           </div>
         ) : (
-          <button type="button" onClick={handleDelete} className="text-sm font-semibold text-rose-400 hover:text-rose-300 transition-colors">
+          <button type="button" onClick={handleDelete} className="text-sm font-semibold text-rose-700 hover:text-rose-800 transition-colors">
             Supprimer ce bien
           </button>
         )}

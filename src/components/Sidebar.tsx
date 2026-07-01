@@ -53,10 +53,10 @@ export default function Sidebar() {
                 "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all",
                 isActive
                   ? "bg-[#2A9FD6]/15 text-[#2A9FD6] shadow-sm"
-                  : "text-white/40 hover:bg-white/5 hover:text-white/80"
+                  : "text-gray-500 hover:bg-gray-50 hover:text-gray-700"
               )}
             >
-              <Icon className={cn("w-4 h-4 shrink-0", isActive ? "text-[#2A9FD6]" : "text-white/30")} />
+              <Icon className={cn("w-4 h-4 shrink-0", isActive ? "text-[#2A9FD6]" : "text-gray-400")} />
               {label}
               {isActive && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[#2A9FD6]" />}
             </Link>
@@ -64,7 +64,7 @@ export default function Sidebar() {
         })}
       </nav>
 
-      <div className="mt-auto space-y-0.5 pt-4 border-t border-white/5">
+      <div className="mt-auto space-y-0.5 pt-4 border-t border-gray-100">
         <Link
           href="/parametres"
           onClick={() => setMobileOpen(false)}
@@ -72,32 +72,32 @@ export default function Sidebar() {
             "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all",
             pathname === "/parametres"
               ? "bg-[#2A9FD6]/15 text-[#2A9FD6]"
-              : "text-white/40 hover:bg-white/5 hover:text-white/80"
+              : "text-gray-500 hover:bg-gray-50 hover:text-gray-700"
           )}
         >
-          <IconSettings className={cn("w-4 h-4 shrink-0", pathname === "/parametres" ? "text-[#2A9FD6]" : "text-white/30")} />
+          <IconSettings className={cn("w-4 h-4 shrink-0", pathname === "/parametres" ? "text-[#2A9FD6]" : "text-gray-400")} />
           Paramètres
         </Link>
 
         <Link
           href="/"
           onClick={() => setMobileOpen(false)}
-          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-white/40 hover:bg-white/5 hover:text-white/80 transition-all"
+          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-700 transition-all"
         >
-          <Home className="w-4 h-4 shrink-0 text-white/30" />
+          <Home className="w-4 h-4 shrink-0 text-gray-400" />
           Accueil
         </Link>
 
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-rose-400/70 hover:bg-rose-500/10 hover:text-rose-400 transition-all"
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-rose-700/70 hover:bg-rose-500/10 hover:text-rose-700 transition-all"
         >
           <LogOut className="w-4 h-4 shrink-0" />
           Déconnexion
         </button>
 
         <div className="px-3 pt-4">
-          <p className="text-white/15 text-xs">&copy; 2026 MyLocavio</p>
+          <p className="text-gray-300 text-xs">&copy; 2026 MyLocavio</p>
         </div>
       </div>
     </div>
@@ -106,11 +106,11 @@ export default function Sidebar() {
   return (
     <>
       {/* Mobile top bar */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-30 flex items-center justify-between bg-[#0D1117] border-b border-white/5 px-4 h-14">
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-30 flex items-center justify-between bg-gray-50 border-b border-gray-100 px-4 h-14">
         <Logo dark />
         <button
           onClick={() => setMobileOpen(true)}
-          className="p-2 rounded-lg text-white/40 hover:bg-white/5"
+          className="p-2 rounded-lg text-gray-500 hover:bg-gray-50"
           aria-label="Ouvrir le menu"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -126,12 +126,12 @@ export default function Sidebar() {
 
       {/* Mobile drawer */}
       <aside className={cn(
-        "lg:hidden fixed top-0 left-0 h-full w-64 z-50 bg-[#0D1117] border-r border-white/5 transform transition-transform duration-200",
+        "lg:hidden fixed top-0 left-0 h-full w-64 z-50 bg-gray-50 border-r border-gray-100 transform transition-transform duration-200",
         mobileOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         <button
           onClick={() => setMobileOpen(false)}
-          className="absolute top-4 right-4 p-1.5 rounded-lg text-white/30 hover:text-white/60 hover:bg-white/5"
+          className="absolute top-4 right-4 p-1.5 rounded-lg text-gray-400 hover:text-gray-500 hover:bg-gray-50"
           aria-label="Fermer le menu"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -142,7 +142,7 @@ export default function Sidebar() {
       </aside>
 
       {/* Desktop sidebar */}
-      <aside className="hidden lg:flex lg:flex-col fixed top-0 left-0 h-full w-64 bg-[#0D1117] border-r border-white/5 z-20">
+      <aside className="hidden lg:flex lg:flex-col fixed top-0 left-0 h-full w-64 bg-gray-50 border-r border-gray-100 z-20">
         <SidebarContent />
       </aside>
     </>
