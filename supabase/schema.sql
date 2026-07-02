@@ -140,6 +140,29 @@ create policy "relances: own data" on public.relances
   for all using (auth.uid() = user_id);
 
 -- ============================================================
+-- Droits d'accès (GRANT)
+-- ============================================================
+-- IMPORTANT : activer RLS et créer des policies ne suffit pas. Sans ces
+-- GRANT, Postgres refuse toute requête sur ces tables pour le rôle
+-- "authenticated" avec l'erreur "permission denied for table ...", AVANT
+-- même d'évaluer les policies RLS ci-dessus. Les deux mécanismes sont
+-- nécessaires et complémentaires (voir supabase/migration_grants.sql pour
+-- le détail si ce script est exécuté sur un projet déjà existant).
+
+grant usage on schema public to anon, authenticated;
+
+grant select, insert, update, delete on table public.profiles     to authenticated;
+grant select, insert, update, delete on table public.biens        to authenticated;
+grant select, insert, update, delete on table public.locataires   to authenticated;
+grant select, insert, update, delete on table public.baux         to authenticated;
+grant select, insert, update, delete on table public.quittances   to authenticated;
+grant select, insert, update, delete on table public.documents    to authenticated;
+grant select, insert, update, delete on table public.relances     to authenticated;
+
+alter default privileges in schema public
+  grant select, insert, update, delete on tables to authenticated;
+
+-- ============================================================
 -- Trigger : créer automatiquement un profil à l'inscription
 -- ============================================================
 
@@ -181,6 +204,8 @@ alter table public.etats_des_lieux enable row level security;
 create policy "etats_des_lieux: own data" on public.etats_des_lieux
   for all using (auth.uid() = user_id);
 
+grant select, insert, update, delete on table public.etats_des_lieux to authenticated;
+
 -- ============================================================
 -- Migration additive — formulaire de contact + demandes de suppression
 -- de compte (RGPD). À exécuter dans Supabase SQL Editor.
@@ -210,6 +235,8 @@ create policy "contact_messages: insert public" on public.contact_messages
 -- Personne ne peut lire les messages via l'API publique : consultation
 -- réservée au propriétaire du projet Supabase (dashboard / service role).
 -- (Aucune policy SELECT créée intentionnellement.)
+grant insert on table public.contact_messages to anon, authenticated;
+grant select on table public.contact_messages to authenticated;
 
 -- Demandes de suppression de compte (RGPD). La suppression réelle du compte
 -- auth.users doit être effectuée manuellement ou via une tâche planifiée
@@ -227,3 +254,5 @@ alter table public.account_deletion_requests enable row level security;
 
 create policy "account_deletion_requests: own data" on public.account_deletion_requests
   for all using (auth.uid() = user_id);
+
+grant select, insert, update, delete on table public.account_deletion_requests to authenticated;

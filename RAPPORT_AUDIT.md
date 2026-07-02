@@ -124,6 +124,85 @@ Confirmé ensuite en générant un vrai PDF via le serveur Next.js avec `mois: "
 - ✅ **Bug de contenu réel trouvé et corrigé** sur la quittance (date illisible "undefined NaN").
 - ⚠️ **Non confirmé** : si Melissa rencontre un échec *total* (erreur 500, page blanche, timeout) plutôt qu'un contenu incorrect, je n'ai pas pu reproduire ce scénario précis sans accès à son environnement Vercel/Supabase réel. Cause la plus probable, déjà identifiée dans l'audit précédent : si Vercel déploie depuis `main` (qui n'a reçu aucun des correctifs de cette branche), le site tourne potentiellement sur une build antérieure au fix du bug de build critique (`etats-des-lieux/nouveau` cassant `next build`). **Merger cette branche est un prérequis avant tout autre diagnostic.** Si le problème persiste après le merge, la prochaine étape est de consulter les logs de fonction Vercel (Vercel → Deployments → Functions) au moment d'un clic sur "Générer le PDF", pour obtenir l'erreur exacte côté serveur.
 
+**Mise à jour : la branche a été mergée sur `main` le 02/07/2026** (fast-forward propre, sans conflit, `1a5d92d..e6863ed`), à la demande explicite de Melissa. Les correctifs des BUG 1/2/3 sont donc désormais sur `main` et se déploieront au prochain build Vercel automatique (si Vercel est bien connecté sur `main`).
+
+---
+
+## BUG 4 — "permission denied for table biens" (rapporté après le merge, sur le vrai site)
+
+### Diagnostic
+
+Ce message est une **erreur de droits Postgres au niveau de la table**, distincte d'une violation RLS ou de clé étrangère (celles-ci auraient un message différent, ex. `new row violates row-level security policy` ou `violates foreign key constraint`). `permission denied for table X` signifie que Postgres refuse la requête **avant même de regarder les policies RLS**, parce que le rôle qui exécute la requête (`authenticated`, côté Supabase) n'a tout simplement pas la permission SQL de base (`SELECT`/`INSERT`/`UPDATE`/`DELETE`) sur cette table.
+
+**Vérification du fichier `supabase/schema.sql` du projet : aucune instruction `GRANT` n'y figurait, nulle part.** Le fichier ne fait que `CREATE TABLE`, `ALTER TABLE ... ENABLE ROW LEVEL SECURITY` et `CREATE POLICY`. C'est un piège classique et très répandu sur Supabase : quand une table est créée en collant du SQL brut dans l'éditeur SQL (comme l'indiquait l'en-tête du fichier : *"À exécuter dans Supabase : SQL Editor → New query → Run"*), les rôles `anon` et `authenticated` **n'obtiennent aucun droit automatiquement** sur cette table — contrairement à une table créée via l'interface "Table Editor" de Supabase, qui accorde ces droits en coulisses. RLS et GRANT sont deux mécanismes différents et complémentaires : RLS filtre *quelles lignes* sont visibles/modifiables ; GRANT autorise ou non l'accès à la table *elle-même*. Il faut les deux.
+
+### Reproduction réelle (PostgreSQL 16 local, schéma exact du projet)
+
+J'ai rejoué `supabase/schema.sql` tel quel (aucun `GRANT` ajouté manuellement, contrairement à mes tests précédents où j'avais accordé les droits sans réaliser que c'était justement ce qui manquait dans le fichier réel), puis simulé un compte connecté tentant d'ajouter un bien avec le payload exact du formulaire :
+
+```
+ERROR:  permission denied for table biens
+```
+
+**Message strictement identique à celui rapporté.** Confirme la cause : absence de `GRANT`.
+
+### Correctif
+
+1. **`supabase/schema.sql`** mis à jour : ajout des `GRANT SELECT, INSERT, UPDATE, DELETE` pour le rôle `authenticated` sur les 9 tables applicatives, `GRANT USAGE ON SCHEMA public`, `GRANT INSERT`/`SELECT` adaptés pour `contact_messages` (accessible aussi en `anon` pour le formulaire de contact public), et un `ALTER DEFAULT PRIVILEGES` pour que toute future table créée par le même script hérite automatiquement de ces droits. Vérifié qu'une installation **complète et neuve** du schéma fonctionne désormais sans script séparé.
+2. **`supabase/migration_grants.sql`** : script autonome, sûr et idempotent, à exécuter par Melissa sur son projet Supabase existant (voir instructions ci-dessous) — n'ajoute que des droits, ne touche à aucune donnée, aucune table, aucune policy.
+
+### PREUVE (avant/après sur PostgreSQL 16, schéma exact)
+
+| Étape | Résultat |
+|---|---|
+| `schema.sql` réel (sans aucun GRANT ajouté) + tentative d'ajout de bien | `ERROR: permission denied for table biens` (reproduit à l'identique) |
+| Application de `migration_grants.sql` | 12× `GRANT` + `ALTER DEFAULT PRIVILEGES`, sans erreur |
+| Ré-exécution du même script (idempotence) | Identique, sans erreur |
+| Même insertion, MÊME compte, après correctif | **Réussit** : `id=e77f2d40-a97d-4cb6-a7e4-699120e452bc, adresse="12 rue de la Paix", ville="Paris", loyer=800.00` |
+| Vérification que les GRANT n'affaiblissent pas l'isolation RLS : un second compte tente de lire les biens | `0` ligne visible (les RLS continuent de filtrer correctement par utilisateur) |
+| Schéma complet (avec GRANT intégrés) rejoué depuis zéro sur base neuve + ajout de bien | **Réussit directement**, sans script séparé |
+
+**Statut : ✅ Cause racine confirmée avec le message d'erreur exact reproduit à l'identique, corrigée, et prouvée par test réel avant/après — y compris la vérification que la sécurité (isolation entre comptes) reste intacte.**
+
+### 📋 À FAIRE PAR MELISSA — script prêt à copier-coller
+
+**Étapes précises (aucune compétence technique requise) :**
+
+1. Va sur [supabase.com](https://supabase.com/dashboard), ouvre ton projet MyLocavio.
+2. Dans le menu de gauche, clique sur **"SQL Editor"** (icône `>_`).
+3. Clique sur **"New query"** en haut.
+4. Copie-colle **exactement** le script ci-dessous dans la zone de texte.
+5. Clique sur le bouton **"Run"** (ou `Ctrl+Entrée` / `Cmd+Entrée`).
+6. Tu dois voir en bas "Success. No rows returned" (normal, ce script ne renvoie pas de données, il accorde juste des droits).
+7. Retourne sur le site, reconnecte-toi si besoin, et réessaie d'ajouter un bien.
+
+```sql
+-- Correction "permission denied for table ..." — sûr, additif, sans risque.
+-- N'accorde que des droits d'accès, ne touche à aucune donnée existante.
+
+grant usage on schema public to anon, authenticated;
+
+grant select, insert, update, delete on table public.profiles     to authenticated;
+grant select, insert, update, delete on table public.biens        to authenticated;
+grant select, insert, update, delete on table public.locataires   to authenticated;
+grant select, insert, update, delete on table public.baux         to authenticated;
+grant select, insert, update, delete on table public.quittances   to authenticated;
+grant select, insert, update, delete on table public.documents    to authenticated;
+grant select, insert, update, delete on table public.relances     to authenticated;
+grant select, insert, update, delete on table public.etats_des_lieux to authenticated;
+grant select, insert, update, delete on table public.account_deletion_requests to authenticated;
+
+grant insert on table public.contact_messages to anon, authenticated;
+grant select on table public.contact_messages to authenticated;
+
+alter default privileges in schema public
+  grant select, insert, update, delete on tables to authenticated;
+```
+
+*(Ce script est aussi disponible dans le fichier `supabase/migration_grants.sql` du dépôt, avec des commentaires détaillés. Il peut être exécuté plusieurs fois sans risque si besoin.)*
+
+**Si l'erreur persiste après ce script :** cela indiquerait que le rôle `authenticated` lui-même a un problème plus profond (rare), ou qu'une autre table que `biens` a le même souci ailleurs dans le parcours. Dans ce cas, le message d'erreur exact (quelle table, quelle action) permettra de cibler précisément la suite.
+
 ---
 
 ## 0. Priorité absolue — thème visuel
