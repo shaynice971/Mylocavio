@@ -62,13 +62,38 @@ export default function CguPage() {
           non conforme du service ou d&apos;une erreur de saisie par l&apos;utilisateur.
         </p>
 
-        <h2 className="text-lg font-bold text-gray-900 mt-8 mb-2">7. Modification des CGU</h2>
+        <h2 className="text-lg font-bold text-gray-900 mt-8 mb-2">7. Limitation de responsabilité relative aux documents générés</h2>
+        <p>
+          Mylocavio met à disposition des outils permettant de générer des documents (baux, états
+          des lieux, quittances) sur la base de modèles conformes à la réglementation en vigueur au
+          jour de leur publication sur la plateforme (notamment le décret n°2015-587 du 29 mai 2015
+          et la loi n°89-462 du 6 juillet 1989).
+        </p>
+        <p>
+          L&apos;utilisateur reste seul responsable de l&apos;exactitude des informations qu&apos;il
+          renseigne, de l&apos;adéquation du type de document généré à sa situation personnelle, et du
+          respect de ses obligations légales en tant que bailleur.
+        </p>
+        <p>
+          Mylocavio s&apos;efforce de maintenir ses modèles à jour des évolutions légales et
+          réglementaires, sans garantir l&apos;exhaustivité ou l&apos;adéquation des documents générés à
+          chaque situation particulière. Il est recommandé à l&apos;utilisateur, en cas de doute ou
+          de situation complexe, de recourir à un professionnel du droit.
+        </p>
+        <p>
+          Mylocavio ne saurait être tenu responsable des conséquences directes ou indirectes
+          résultant d&apos;une utilisation inappropriée des documents générés, d&apos;une erreur de
+          saisie de l&apos;utilisateur, ou d&apos;une évolution législative postérieure à la génération
+          du document.
+        </p>
+
+        <h2 className="text-lg font-bold text-gray-900 mt-8 mb-2">8. Modification des CGU</h2>
         <p>
           MyLocavio se réserve le droit de modifier les présentes CGU. Les utilisateurs seront
           informés de toute modification substantielle.
         </p>
 
-        <h2 className="text-lg font-bold text-gray-900 mt-8 mb-2">8. Droit applicable</h2>
+        <h2 className="text-lg font-bold text-gray-900 mt-8 mb-2">9. Droit applicable</h2>
         <p>Les présentes CGU sont soumises au droit français.</p>
       </section>
     </article>

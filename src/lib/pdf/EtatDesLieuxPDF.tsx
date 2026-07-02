@@ -5,6 +5,7 @@ import {
   View,
   StyleSheet,
 } from "@react-pdf/renderer";
+import { LEGAL_TEMPLATES_REFERENCE_TEXT } from "@/lib/legal-templates-version";
 
 const BRAND_BLUE = "#2A9FD6";
 const GRAY = "#6B7280";
@@ -266,6 +267,7 @@ export function EtatDesLieuxPDF({ etat, bien, locataire, bailleur, pieces }: Eta
         <Text style={styles.footerNote}>
           Le présent état des lieux a été établi contradictoirement entre les parties.
         </Text>
+        <Text style={styles.footerNote}>{LEGAL_TEMPLATES_REFERENCE_TEXT}</Text>
       </Page>
     </Document>
   );

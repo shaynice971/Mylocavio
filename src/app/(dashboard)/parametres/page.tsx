@@ -24,6 +24,9 @@ export default function ParametresPage() {
   const [nom, setNom] = useState("");
   const [email, setEmail] = useState("");
   const [telephone, setTelephone] = useState("");
+  const [adresse, setAdresse] = useState("");
+  const [codePostal, setCodePostal] = useState("");
+  const [ville, setVille] = useState("");
   const [plan, setPlan] = useState<Plan>("gratuit");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -41,7 +44,7 @@ export default function ParametresPage() {
 
       const { data: profile } = await supabase
         .from("profiles")
-        .select("prenom, nom, telephone, plan")
+        .select("prenom, nom, telephone, adresse, code_postal, ville, plan")
         .eq("id", user.id)
         .single();
 
@@ -49,6 +52,9 @@ export default function ParametresPage() {
         setPrenom(profile.prenom ?? "");
         setNom(profile.nom ?? "");
         setTelephone(profile.telephone ?? "");
+        setAdresse(profile.adresse ?? "");
+        setCodePostal(profile.code_postal ?? "");
+        setVille(profile.ville ?? "");
         setPlan((profile.plan as Plan) ?? "gratuit");
       }
       setLoading(false);
@@ -62,7 +68,10 @@ export default function ParametresPage() {
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
-      await supabase.from("profiles").update({ prenom, nom, telephone }).eq("id", user.id);
+      await supabase.from("profiles").update({
+        prenom, nom, telephone,
+        adresse: adresse || null, code_postal: codePostal || null, ville: ville || null,
+      }).eq("id", user.id);
     }
     setSaving(false);
     setSaved(true);
@@ -149,6 +158,23 @@ export default function ParametresPage() {
               <div className="space-y-2">
                 <Label htmlFor="telephone">Téléphone</Label>
                 <Input id="telephone" type="tel" value={telephone} onChange={(e) => setTelephone(e.target.value)} placeholder="+33 6 00 00 00 00" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="adresse">Adresse (domicile)</Label>
+                <Input id="adresse" type="text" value={adresse} onChange={(e) => setAdresse(e.target.value)} placeholder="12 rue de la Paix" />
+                <p className="text-xs text-gray-400">
+                  Requise pour la désignation des parties sur vos contrats de bail générés.
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="code_postal_profil">Code postal</Label>
+                  <Input id="code_postal_profil" type="text" value={codePostal} onChange={(e) => setCodePostal(e.target.value)} placeholder="75001" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="ville_profil">Ville</Label>
+                  <Input id="ville_profil" type="text" value={ville} onChange={(e) => setVille(e.target.value)} placeholder="Paris" />
+                </div>
               </div>
               <div className="flex items-center gap-4 pt-2">
                 <button

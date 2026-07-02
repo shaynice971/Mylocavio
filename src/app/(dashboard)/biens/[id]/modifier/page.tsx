@@ -23,6 +23,15 @@ interface FormState {
   charges: string;
   depot_garantie: string;
   statut: string;
+  type_habitat: string;
+  regime_juridique: string;
+  dpe_classe: string;
+  annexes: string;
+  equipements: string;
+  equipements_communs: string;
+  chauffage_type: string;
+  eau_chaude_type: string;
+  acces_technologies: string;
 }
 
 export default function ModifierBienPage({ params }: { params: { id: string } }) {
@@ -36,6 +45,9 @@ export default function ModifierBienPage({ params }: { params: { id: string } })
     adresse: "", complement_adresse: "", code_postal: "", ville: "",
     type: "appartement", surface: "", nb_pieces: "", loyer: "",
     charges: "0", depot_garantie: "", statut: "vacant",
+    type_habitat: "", regime_juridique: "", dpe_classe: "", annexes: "",
+    equipements: "", equipements_communs: "", chauffage_type: "",
+    eau_chaude_type: "", acces_technologies: "",
   });
 
   useEffect(() => {
@@ -52,13 +64,22 @@ export default function ModifierBienPage({ params }: { params: { id: string } })
           charges: data.charges != null ? String(data.charges) : "0",
           depot_garantie: data.depot_garantie != null ? String(data.depot_garantie) : "",
           statut: data.statut ?? "vacant",
+          type_habitat: data.type_habitat ?? "",
+          regime_juridique: data.regime_juridique ?? "",
+          dpe_classe: data.dpe_classe ?? "",
+          annexes: data.annexes ?? "",
+          equipements: data.equipements ?? "",
+          equipements_communs: data.equipements_communs ?? "",
+          chauffage_type: data.chauffage_type ?? "",
+          eau_chaude_type: data.eau_chaude_type ?? "",
+          acces_technologies: data.acces_technologies ?? "",
         });
       }
       setPageLoading(false);
     });
   }, [params.id]);
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
+  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }
 
@@ -81,6 +102,15 @@ export default function ModifierBienPage({ params }: { params: { id: string } })
       loyer: Number(form.loyer), charges: form.charges ? Number(form.charges) : 0,
       depot_garantie: form.depot_garantie ? Number(form.depot_garantie) : null,
       statut: form.statut,
+      type_habitat: form.type_habitat || null,
+      regime_juridique: form.regime_juridique || null,
+      dpe_classe: form.dpe_classe || null,
+      annexes: form.annexes || null,
+      equipements: form.equipements || null,
+      equipements_communs: form.equipements_communs || null,
+      chauffage_type: form.chauffage_type || null,
+      eau_chaude_type: form.eau_chaude_type || null,
+      acces_technologies: form.acces_technologies || null,
     }).eq("id", params.id);
     if (updateError) { setError(GENERIC_SAVE_ERROR); setLoading(false); return; }
     router.push(`/biens/${params.id}`);
@@ -170,6 +200,68 @@ export default function ModifierBienPage({ params }: { params: { id: string } })
             <div>
               <label className={labelClass} htmlFor="nb_pieces">Nombre de pièces</label>
               <input id="nb_pieces" name="nb_pieces" type="number" min="0" value={form.nb_pieces} onChange={handleChange} className={inputClass} placeholder="3" />
+            </div>
+          </div>
+        </div>
+
+        <div className="border border-gray-200 bg-white shadow-sm rounded-2xl p-6">
+          <h2 className={sectionClass}>Diagnostic &amp; équipements</h2>
+          <p className="text-xs text-gray-400 -mt-3 mb-4">Nécessaire pour générer un bail conforme à la réglementation.</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label className={labelClass} htmlFor="type_habitat">Type d&apos;habitat</label>
+              <select id="type_habitat" name="type_habitat" value={form.type_habitat} onChange={handleChange} className={inputClass}>
+                <option value="">Non renseigné</option>
+                <option value="individuel">Individuel</option>
+                <option value="collectif">Collectif (immeuble)</option>
+              </select>
+            </div>
+            <div>
+              <label className={labelClass} htmlFor="regime_juridique">Régime juridique de l&apos;immeuble</label>
+              <select id="regime_juridique" name="regime_juridique" value={form.regime_juridique} onChange={handleChange} className={inputClass}>
+                <option value="">Non renseigné</option>
+                <option value="copropriete">Copropriété</option>
+                <option value="monopropriete">Hors copropriété</option>
+              </select>
+            </div>
+            <div>
+              <label className={labelClass} htmlFor="dpe_classe">Classe DPE</label>
+              <select id="dpe_classe" name="dpe_classe" value={form.dpe_classe} onChange={handleChange} className={inputClass}>
+                <option value="">Non renseigné</option>
+                {["A", "B", "C", "D", "E", "F", "G"].map((c) => <option key={c} value={c}>{c}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className={labelClass} htmlFor="acces_technologies">Accès aux technologies de l&apos;information</label>
+              <input id="acces_technologies" name="acces_technologies" type="text" value={form.acces_technologies} onChange={handleChange} className={inputClass} placeholder="Fibre optique" />
+            </div>
+            <div>
+              <label className={labelClass} htmlFor="chauffage_type">Chauffage</label>
+              <select id="chauffage_type" name="chauffage_type" value={form.chauffage_type} onChange={handleChange} className={inputClass}>
+                <option value="">Non renseigné</option>
+                <option value="individuel">Individuel</option>
+                <option value="collectif">Collectif</option>
+              </select>
+            </div>
+            <div>
+              <label className={labelClass} htmlFor="eau_chaude_type">Eau chaude sanitaire</label>
+              <select id="eau_chaude_type" name="eau_chaude_type" value={form.eau_chaude_type} onChange={handleChange} className={inputClass}>
+                <option value="">Non renseigné</option>
+                <option value="individuel">Individuel</option>
+                <option value="collectif">Collectif</option>
+              </select>
+            </div>
+            <div className="md:col-span-2">
+              <label className={labelClass} htmlFor="annexes">Autres parties du logement (cave, parking, jardin...)</label>
+              <input id="annexes" name="annexes" type="text" value={form.annexes} onChange={handleChange} className={inputClass} placeholder="Cave n°3, place de parking" />
+            </div>
+            <div className="md:col-span-2">
+              <label className={labelClass} htmlFor="equipements">Équipement du logement</label>
+              <textarea id="equipements" name="equipements" rows={2} value={form.equipements} onChange={handleChange} className={`${inputClass} resize-none`} placeholder="Cuisine équipée, salle de bain avec baignoire..." />
+            </div>
+            <div className="md:col-span-2">
+              <label className={labelClass} htmlFor="equipements_communs">Locaux et équipements à usage commun (si copropriété)</label>
+              <textarea id="equipements_communs" name="equipements_communs" rows={2} value={form.equipements_communs} onChange={handleChange} className={`${inputClass} resize-none`} placeholder="Local à vélos, ascenseur, jardin partagé..." />
             </div>
           </div>
         </div>

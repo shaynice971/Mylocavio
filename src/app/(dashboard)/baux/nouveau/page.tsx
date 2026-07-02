@@ -35,9 +35,21 @@ export default function NouveauBailPage() {
   const [dureesMobilite, setDureesMobilite] = useState(1);
   const [loyer, setLoyer] = useState("");
   const [charges, setCharges] = useState("");
+  const [chargesType, setChargesType] = useState<"provisions" | "forfait">("provisions");
   const [depotGarantie, setDepotGarantie] = useState("");
   const [dateDebut, setDateDebut] = useState(today);
   const [dateFin, setDateFin] = useState("");
+  const [irlTrimestre, setIrlTrimestre] = useState("");
+  const [irlValeur, setIrlValeur] = useState("");
+  const [dernierLoyerPrecedent, setDernierLoyerPrecedent] = useState("");
+  const [mandataireNom, setMandataireNom] = useState("");
+  const [mandataireAdresse, setMandataireAdresse] = useState("");
+  const [travauxBailleur, setTravauxBailleur] = useState("");
+  const [travauxAmelioration, setTravauxAmelioration] = useState("");
+  const [honorairesLocataire, setHonorairesLocataire] = useState("");
+  const [honorairesBailleur, setHonorairesBailleur] = useState("");
+  const [colocatairesSupplementaires, setColocatairesSupplementaires] = useState("");
+  const [conditionsParticulieres, setConditionsParticulieres] = useState("");
 
   useEffect(() => {
     if (!dateDebut) return;
@@ -46,6 +58,18 @@ export default function NouveauBailPage() {
     else if (typeBail === "meuble") setDateFin(toDateString(addYears(d, 1)));
     else setDateFin(toDateString(addMonths(d, dureesMobilite)));
   }, [typeBail, dateDebut, dureesMobilite]);
+
+  // Le régime "forfait" de charges n'est légalement autorisé qu'en meublé ou
+  // bail mobilité : un bail vide ne peut avoir que des provisions avec
+  // régularisation annuelle (art. 23 loi du 6 juillet 1989).
+  useEffect(() => {
+    if (typeBail === "vide") setChargesType("provisions");
+  }, [typeBail]);
+
+  // Le bail mobilité (loi ELAN) n'admet légalement aucun dépôt de garantie.
+  useEffect(() => {
+    if (typeBail === "mobilite") setDepotGarantie("");
+  }, [typeBail]);
 
   useEffect(() => {
     async function fetchBiens() {
@@ -82,6 +106,14 @@ export default function NouveauBailPage() {
       setError("La durée d'un bail mobilité doit être comprise entre 1 et 10 mois.");
       return;
     }
+    if (typeBail === "mobilite" && depotGarantie && Number(depotGarantie) > 0) {
+      setError("Le bail mobilité n'admet légalement aucun dépôt de garantie.");
+      return;
+    }
+    if (honorairesLocataire && honorairesBailleur && Number(honorairesLocataire) > Number(honorairesBailleur)) {
+      setError("Les honoraires à la charge du locataire ne peuvent pas excéder ceux à la charge du bailleur.");
+      return;
+    }
     setLoading(true); setError(null);
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -89,8 +121,20 @@ export default function NouveauBailPage() {
     const { error: insertError } = await supabase.from("baux").insert({
       user_id: user.id, bien_id: bienId, locataire_id: locataireId, type: typeBail,
       loyer: Number(loyer), charges: charges ? Number(charges) : 0,
+      charges_type: chargesType,
       depot_garantie: depotGarantie ? Number(depotGarantie) : null,
       date_debut: dateDebut, date_fin: dateFin || null,
+      mandataire_nom: mandataireNom || null,
+      mandataire_adresse: mandataireAdresse || null,
+      irl_trimestre_reference: irlTrimestre || null,
+      irl_valeur_reference: irlValeur ? Number(irlValeur) : null,
+      dernier_loyer_precedent: dernierLoyerPrecedent ? Number(dernierLoyerPrecedent) : null,
+      travaux_bailleur: travauxBailleur || null,
+      travaux_amelioration: travauxAmelioration || null,
+      honoraires_locataire: honorairesLocataire ? Number(honorairesLocataire) : null,
+      honoraires_bailleur: honorairesBailleur ? Number(honorairesBailleur) : null,
+      colocataires_supplementaires: colocatairesSupplementaires || null,
+      conditions_particulieres: conditionsParticulieres || null,
     });
     if (insertError) { setError(GENERIC_SAVE_ERROR); setLoading(false); return; }
     router.push("/documents");
@@ -183,12 +227,41 @@ export default function NouveauBailPage() {
               <input id="loyer_hc" type="number" min={0} required value={loyer} onChange={(e) => setLoyer(e.target.value)} className={inputClass} placeholder="800" />
             </div>
             <div>
-              <label className={labelClass} htmlFor="charges">Provisions sur charges (€)</label>
+              <label className={labelClass} htmlFor="charges">
+                {chargesType === "forfait" ? "Charges forfaitaires (€)" : "Provisions sur charges (€)"}
+              </label>
               <input id="charges" type="number" min={0} value={charges} onChange={(e) => setCharges(e.target.value)} className={inputClass} placeholder="0" />
             </div>
             <div>
+              <label className={labelClass} htmlFor="charges_type">Régime des charges</label>
+              <select
+                id="charges_type"
+                value={chargesType}
+                onChange={(e) => setChargesType(e.target.value as "provisions" | "forfait")}
+                disabled={typeBail === "vide"}
+                className={inputClass}
+              >
+                <option value="provisions">Provisions avec régularisation annuelle</option>
+                <option value="forfait">Forfait</option>
+              </select>
+              {typeBail === "vide" && (
+                <p className="text-xs text-gray-400 mt-1">
+                  Le régime forfaitaire n&apos;est pas autorisé pour un bail vide (réservé au meublé
+                  et au bail mobilité) — seules les provisions avec régularisation sont possibles.
+                </p>
+              )}
+            </div>
+            <div>
               <label className={labelClass} htmlFor="depot_garantie">Dépôt de garantie (€)</label>
-              <input id="depot_garantie" type="number" min={0} value={depotGarantie} onChange={(e) => setDepotGarantie(e.target.value)} className={inputClass} placeholder="1600" />
+              <input
+                id="depot_garantie" type="number" min={0} value={depotGarantie}
+                onChange={(e) => setDepotGarantie(e.target.value)}
+                disabled={typeBail === "mobilite"}
+                className={inputClass} placeholder={typeBail === "mobilite" ? "Non applicable" : "1600"}
+              />
+              {typeBail === "mobilite" && (
+                <p className="text-xs text-gray-400 mt-1">Le bail mobilité n&apos;admet légalement aucun dépôt de garantie.</p>
+              )}
             </div>
             <div>
               <label className={labelClass} htmlFor="date_debut">Date de début *</label>
@@ -208,7 +281,73 @@ export default function NouveauBailPage() {
                 className={`${inputClass} ${typeBail !== "mobilite" ? "opacity-50 cursor-default" : ""}`}
               />
             </div>
+            <div>
+              <label className={labelClass} htmlFor="irl_trimestre">IRL — trimestre de référence</label>
+              <input id="irl_trimestre" type="text" value={irlTrimestre} onChange={(e) => setIrlTrimestre(e.target.value)} className={inputClass} placeholder="2e trimestre 2026" />
+            </div>
+            <div>
+              <label className={labelClass} htmlFor="irl_valeur">IRL — valeur de référence</label>
+              <input id="irl_valeur" type="number" step="0.01" min={0} value={irlValeur} onChange={(e) => setIrlValeur(e.target.value)} className={inputClass} placeholder="145,23" />
+            </div>
+            <div className="md:col-span-2">
+              <label className={labelClass} htmlFor="dernier_loyer_precedent">
+                Loyer versé par le précédent locataire (€)
+                <span className="ml-1 text-gray-400 font-normal">— si relogement de moins de 18 mois</span>
+              </label>
+              <input id="dernier_loyer_precedent" type="number" min={0} value={dernierLoyerPrecedent} onChange={(e) => setDernierLoyerPrecedent(e.target.value)} className={inputClass} placeholder="Laisser vide si non applicable" />
+            </div>
           </div>
+        </div>
+
+        {/* Étape 4 */}
+        <div className="border border-gray-200 bg-white shadow-sm rounded-2xl p-6">
+          <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-1">Étape 4 — Informations complémentaires (optionnel)</h2>
+          <p className="text-xs text-gray-400 mb-4">
+            À renseigner si applicable à votre situation : mandataire, travaux, colocation, honoraires d&apos;agence.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label className={labelClass} htmlFor="mandataire_nom">Mandataire du bailleur — nom</label>
+              <input id="mandataire_nom" type="text" value={mandataireNom} onChange={(e) => setMandataireNom(e.target.value)} className={inputClass} placeholder="Agence Immobilière XYZ" />
+            </div>
+            <div>
+              <label className={labelClass} htmlFor="mandataire_adresse">Mandataire du bailleur — adresse</label>
+              <input id="mandataire_adresse" type="text" value={mandataireAdresse} onChange={(e) => setMandataireAdresse(e.target.value)} className={inputClass} />
+            </div>
+            <div className="md:col-span-2">
+              <label className={labelClass} htmlFor="travaux_bailleur">Travaux effectués depuis le dernier contrat</label>
+              <textarea id="travaux_bailleur" rows={2} value={travauxBailleur} onChange={(e) => setTravauxBailleur(e.target.value)} className={`${inputClass} resize-none`} />
+            </div>
+            <div className="md:col-span-2">
+              <label className={labelClass} htmlFor="travaux_amelioration">Travaux d&apos;amélioration décidés en cours de bail précédent</label>
+              <textarea id="travaux_amelioration" rows={2} value={travauxAmelioration} onChange={(e) => setTravauxAmelioration(e.target.value)} className={`${inputClass} resize-none`} />
+            </div>
+            <div>
+              <label className={labelClass} htmlFor="honoraires_bailleur">Honoraires à la charge du bailleur (€)</label>
+              <input id="honoraires_bailleur" type="number" min={0} value={honorairesBailleur} onChange={(e) => setHonorairesBailleur(e.target.value)} className={inputClass} />
+            </div>
+            <div>
+              <label className={labelClass} htmlFor="honoraires_locataire">Honoraires à la charge du locataire (€)</label>
+              <input id="honoraires_locataire" type="number" min={0} value={honorairesLocataire} onChange={(e) => setHonorairesLocataire(e.target.value)} className={inputClass} />
+            </div>
+            <div className="md:col-span-2">
+              <label className={labelClass} htmlFor="colocataires_supplementaires">
+                Colocataires solidaires additionnels
+                <span className="ml-1 text-gray-400 font-normal">— si colocation</span>
+              </label>
+              <input id="colocataires_supplementaires" type="text" value={colocatairesSupplementaires} onChange={(e) => setColocatairesSupplementaires(e.target.value)} className={inputClass} placeholder="Prénom Nom, Prénom Nom..." />
+            </div>
+            <div className="md:col-span-2">
+              <label className={labelClass} htmlFor="conditions_particulieres">Autres conditions particulières</label>
+              <textarea id="conditions_particulieres" rows={3} value={conditionsParticulieres} onChange={(e) => setConditionsParticulieres(e.target.value)} className={`${inputClass} resize-none`} />
+            </div>
+          </div>
+        </div>
+
+        <div className="px-4 py-3 bg-amber-50 border border-amber-200 text-amber-800 text-xs rounded-xl">
+          Vous restez seul responsable de l&apos;exactitude des informations saisies et de
+          l&apos;adéquation de ce contrat à votre situation personnelle. En cas de doute, consultez un
+          professionnel du droit. Voir les <Link href="/cgu" className="underline font-semibold">CGU</Link> pour le détail.
         </div>
 
         <div className="flex items-center gap-4">

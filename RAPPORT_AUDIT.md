@@ -1,7 +1,65 @@
 # Rapport d'audit MyLocavio — session du 01/07/2026
 
-Branche : `claude/mylocavio-audit-improvements-74qgek` (non mergée sur `main`).
+Branche : `claude/mylocavio-audit-improvements-74qgek`. Les sections BUG 1 à 4 ont été mergées sur `main` le 02/07/2026 à la demande de Melissa. **La section "Refonte du bail" ci-dessous, plus récente, N'A PAS ENCORE été mergée** (contenu juridique à valider en priorité).
 Ce rapport couvre l'audit technique/sécurité, la veille concurrentielle et les améliorations produit réalisées en autonomie. **Aucune clé n'a été exposée, aucune donnée supprimée, aucun déploiement production déclenché.**
+
+---
+
+## MISSION — Refonte complète et sécurisation juridique du bail (BailPDF)
+
+**Cette section documente la refonte du 2 juillet 2026 : NE PAS MERGER cette partie sans validation explicite de Melissa (contenu juridique).**
+
+### Ce qui a été fait
+
+- **Recherche juridique** exclusivement sur sources officielles (Légifrance — décret n°2015-587 du 29 mai 2015 et loi n°89-462 du 6 juillet 1989 —, service-public.fr fiches F35109/F920). Aucune source commerciale tierce utilisée. Légifrance bloquant la récupération automatisée de longs extraits (protection anti-robot), les formulations utilisées dans le PDF sont des **paraphrases fidèles avec référence d'article exacte**, pas une reproduction mot à mot certifiée — voir "points de vigilance" ci-dessous et dans `CHANGELOG_LEGAL.md`.
+- **`src/lib/pdf/BailPDF.tsx` entièrement réécrit** (désormais 2 pages) pour couvrir les 10 rubriques obligatoires du contrat-type (décret n°2015-587, annexe 1, logement nu) : désignation des parties (avec mandataire éventuel et colocataires), objet du contrat (logement, DPE, chauffage, eau chaude, équipements, accès TIC), durée, conditions financières (loyer, IRL, charges, loyer du précédent locataire, dépôt de garantie), travaux, garanties, clause de solidarité, clause résolutoire, honoraires de location, conditions particulières — plus la liste des annexes obligatoires et les signatures.
+- **Affichage conditionnel systématique** : chaque rubrique optionnelle non renseignée affiche "Non applicable" (structurellement non pertinent, ex. mandataire absent) ou "Non renseigné" (donnée manquante) plutôt qu'un champ vide suspect — jamais les deux confondus. La section "Locaux à usage commun" et l'annexe "règlement de copropriété" ne s'affichent que si le bien est déclaré en copropriété. La mention "Loyer du précédent locataire" n'apparaît que si elle a été renseignée (cas <18 mois).
+- **Validations légales ajoutées côté formulaire** (`baux/nouveau`) : le régime de charges "forfait" est désormais impossible à sélectionner pour un bail **vide** (verrouillé sur "provisions avec régularisation" — le forfait n'est légalement autorisé qu'en meublé/mobilité) ; le dépôt de garantie est désactivé et vidé automatiquement pour un bail **mobilité** (aucun dépôt n'est légalement autorisé pour ce type de bail) ; contrôle que les honoraires à la charge du locataire ne dépassent pas ceux du bailleur (art. 5 loi 1989).
+- **Système de traçabilité juridique** : `src/lib/legal-templates-version.ts` centralise la date de dernière vérification dans une seule constante (`LEGAL_TEMPLATES_LAST_VERIFIED`), reprise automatiquement en pied de page des **3** documents générés (bail, quittance, état des lieux).
+- **`CHANGELOG_LEGAL.md`** créé à la racine, avec les textes de référence et un historique daté des vérifications (première entrée renseignée, structure prête pour les suivantes).
+- **CGU** (`src/app/(legal)/cgu/page.tsx`) : nouvelle section 7 "Limitation de responsabilité relative aux documents générés" (texte fourni intégré tel quel), sections suivantes renumérotées.
+- **Avertissement UI** : bandeau visible juste au-dessus du bouton "Créer le bail" dans le formulaire, rappelant à l'utilisateur sa responsabilité sur les informations saisies, avec lien vers les CGU.
+
+### Nouveaux champs ajoutés (schéma + formulaire)
+
+Migration additive testée sur PostgreSQL 16 (`supabase/migration_bail_complet.sql`, également intégrée à `supabase/schema.sql` pour les nouvelles installations) :
+
+| Table | Champ | Type | Où le renseigner |
+|---|---|---|---|
+| `profiles` | `adresse`, `code_postal`, `ville` | text | Paramètres → Mon profil (domicile du bailleur) |
+| `biens` | `type_habitat` | `individuel`\|`collectif` | Ajouter/Modifier un bien |
+| `biens` | `regime_juridique` | `copropriete`\|`monopropriete` | Ajouter/Modifier un bien |
+| `biens` | `dpe_classe` | `A`…`G` | Ajouter/Modifier un bien |
+| `biens` | `annexes` | text libre | Ajouter/Modifier un bien (cave, parking...) |
+| `biens` | `equipements` | text libre | Ajouter/Modifier un bien |
+| `biens` | `equipements_communs` | text libre | Ajouter/Modifier un bien (si copropriété) |
+| `biens` | `chauffage_type`, `eau_chaude_type` | `individuel`\|`collectif` | Ajouter/Modifier un bien |
+| `biens` | `acces_technologies` | text libre | Ajouter/Modifier un bien (fibre, etc.) |
+| `baux` | `mandataire_nom`, `mandataire_adresse` | text | Créer un bail — Étape 4 (optionnel) |
+| `baux` | `irl_trimestre_reference`, `irl_valeur_reference` | text / numeric | Créer un bail — Étape 3 |
+| `baux` | `dernier_loyer_precedent` | numeric | Créer un bail — Étape 3 (si relocation <18 mois) |
+| `baux` | `charges_type` | `provisions`\|`forfait` | Créer un bail — Étape 3 (verrouillé sur provisions si bail vide) |
+| `baux` | `travaux_bailleur`, `travaux_amelioration` | text libre | Créer un bail — Étape 4 (optionnel) |
+| `baux` | `honoraires_locataire`, `honoraires_bailleur` | numeric | Créer un bail — Étape 4 (optionnel) |
+| `baux` | `colocataires_supplementaires` | text libre | Créer un bail — Étape 4 (si colocation) |
+| `baux` | `conditions_particulieres` | text libre | Créer un bail — Étape 4 (optionnel) |
+
+**Note sur la colocation** : MyLocavio ne modélise pas encore la colocation de façon relationnelle (un bail = un seul locataire principal en base). Le champ `colocataires_supplementaires` est un texte libre qui permet d'afficher correctement la clause de solidarité dans le PDF, sans refonte du modèle de données des locataires — décision assumée pour rester dans le périmètre de cette mission, à faire évoluer si la colocation devient un cas d'usage fréquent.
+
+### PREUVE (génération réelle testée)
+
+Trois PDF générés réellement via le serveur Next.js et le moteur `@react-pdf/renderer` (routes de test temporaires, supprimées avant commit) :
+- **Bail complet** (toutes rubriques optionnelles remplies : mandataire, colocation, travaux, honoraires, IRL, copropriété) — 4 pages, toutes les rubriques et l'annexe "règlement de copropriété" s'affichent correctement.
+- **Bail minimal** (bail mobilité, aucun champ optionnel renseigné) — 3 pages, "Non applicable"/"Non renseigné" partout où attendu, dépôt de garantie "Non exigé", pas de section colocation ni copropriété, annexe règlement de copropriété absente comme attendu.
+- Migration `migration_bail_complet.sql` testée sur PostgreSQL 16 : application propre, idempotence confirmée (ré-exécution sans erreur), insertion réelle d'un bail avec tous les nouveaux champs réussie, et contrainte CHECK sur `dpe_classe` testée (valeur invalide `'Z'` correctement rejetée).
+
+### Points de vigilance juridique (hors périmètre technique, à faire relire par un juriste)
+
+- Le texte intégral exact de l'Annexe 1 du décret n°2015-587 n'a pas pu être récupéré mot à mot (Légifrance bloque la récupération automatisée) : le contenu du PDF est une paraphrase fidèle avec référence précise, pas une reproduction certifiée. **Recommandation : faire relire le PDF généré par un juriste avant tout usage réel avec de vrais locataires.**
+- L'obligation d'annexer l'attestation d'assurance habitation *au moment de la signature* n'a pas été confirmée par les sources consultées comme une pièce obligatoire du dossier (c'est en revanche une obligation du locataire pendant la durée du bail, et un motif de clause résolutoire) — elle est listée dans les annexes par précaution, sur la base de la liste demandée, mais mériterait une vérification.
+- La désignation cadastrale et la période de construction du logement (mentionnées dans certaines sources comme faisant partie de l'objet du contrat) n'ont pas été ajoutées au schéma : hors périmètre explicite de la mission, à évaluer séparément.
+- Le cas du bailleur "personne morale" (SCI, société) n'est pas géré distinctement (durée 6 ans, dénomination/siège social) : l'application suppose un bailleur personne physique, cohérent avec le positionnement produit ("primo-bailleurs particuliers"). Une note informative est ajoutée dans le PDF, sans champ dédié.
+- Les diagnostics techniques eux-mêmes (DPE réel, état des risques, plomb, électricité/gaz) ne sont pas générés par l'application (rappelé explicitement dans le PDF) : c'est un diagnostic réel réalisé par un professionnel, hors périmètre d'un générateur de documents.
 
 ---
 

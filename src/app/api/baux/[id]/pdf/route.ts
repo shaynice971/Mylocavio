@@ -29,7 +29,12 @@ export async function GET(
     .select(
       `
       id, type, date_debut, date_fin, loyer, charges, depot_garantie, user_id, locataire_id, bien_id,
-      biens ( adresse, complement_adresse, code_postal, ville, type, surface, nb_pieces ),
+      charges_type, mandataire_nom, mandataire_adresse, irl_trimestre_reference, irl_valeur_reference,
+      dernier_loyer_precedent, travaux_bailleur, travaux_amelioration, honoraires_locataire,
+      honoraires_bailleur, colocataires_supplementaires, conditions_particulieres,
+      biens ( adresse, complement_adresse, code_postal, ville, type, surface, nb_pieces,
+        type_habitat, regime_juridique, dpe_classe, annexes, equipements, equipements_communs,
+        chauffage_type, eau_chaude_type, acces_technologies ),
       locataires ( prenom, nom, email, telephone, date_entree )
     `
     )
@@ -48,7 +53,7 @@ export async function GET(
   // Fetch bailleur profile
   const { data: profile } = await supabase
     .from("profiles")
-    .select("prenom, nom, telephone")
+    .select("prenom, nom, telephone, adresse, code_postal, ville")
     .eq("id", user.id)
     .single();
 
@@ -72,7 +77,19 @@ export async function GET(
       date_fin: bail.date_fin ?? null,
       loyer: Number(bail.loyer),
       charges: Number(bail.charges),
+      charges_type: bail.charges_type as "provisions" | "forfait" | null,
       depot_garantie: bail.depot_garantie ? Number(bail.depot_garantie) : null,
+      mandataire_nom: bail.mandataire_nom ?? null,
+      mandataire_adresse: bail.mandataire_adresse ?? null,
+      irl_trimestre_reference: bail.irl_trimestre_reference ?? null,
+      irl_valeur_reference: bail.irl_valeur_reference ? Number(bail.irl_valeur_reference) : null,
+      dernier_loyer_precedent: bail.dernier_loyer_precedent ? Number(bail.dernier_loyer_precedent) : null,
+      travaux_bailleur: bail.travaux_bailleur ?? null,
+      travaux_amelioration: bail.travaux_amelioration ?? null,
+      honoraires_locataire: bail.honoraires_locataire ? Number(bail.honoraires_locataire) : null,
+      honoraires_bailleur: bail.honoraires_bailleur ? Number(bail.honoraires_bailleur) : null,
+      colocataires_supplementaires: bail.colocataires_supplementaires ?? null,
+      conditions_particulieres: bail.conditions_particulieres ?? null,
     },
     bien: {
       adresse: bien.adresse,
@@ -82,6 +99,15 @@ export async function GET(
       type: bien.type,
       surface: bien.surface ?? null,
       nb_pieces: bien.nb_pieces ?? null,
+      type_habitat: bien.type_habitat ?? null,
+      regime_juridique: bien.regime_juridique ?? null,
+      dpe_classe: bien.dpe_classe ?? null,
+      annexes: bien.annexes ?? null,
+      equipements: bien.equipements ?? null,
+      equipements_communs: bien.equipements_communs ?? null,
+      chauffage_type: bien.chauffage_type ?? null,
+      eau_chaude_type: bien.eau_chaude_type ?? null,
+      acces_technologies: bien.acces_technologies ?? null,
     },
     locataire: {
       prenom: locataire.prenom,
@@ -94,6 +120,9 @@ export async function GET(
       prenom: profile.prenom ?? "",
       nom: profile.nom ?? "",
       telephone: profile.telephone ?? undefined,
+      adresse: profile.adresse ?? null,
+      code_postal: profile.code_postal ?? null,
+      ville: profile.ville ?? null,
     },
   };
 

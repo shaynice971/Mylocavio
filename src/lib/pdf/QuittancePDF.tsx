@@ -6,6 +6,7 @@ import {
   StyleSheet,
 } from "@react-pdf/renderer";
 import { numberToWords } from "./numberToWords";
+import { LEGAL_TEMPLATES_REFERENCE_TEXT } from "@/lib/legal-templates-version";
 
 const BRAND_BLUE = "#2A9FD6";
 const GRAY = "#6B7280";
@@ -287,6 +288,7 @@ export function QuittancePDF({ data }: { data: QuittanceData }) {
           Cette quittance annule tous les reçus qui auraient pu être établis précédemment
           pour la même période. Elle ne vaut que pour la période indiquée.
         </Text>
+        <Text style={styles.footerNote}>{LEGAL_TEMPLATES_REFERENCE_TEXT}</Text>
       </Page>
     </Document>
   );

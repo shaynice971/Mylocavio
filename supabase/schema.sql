@@ -256,3 +256,43 @@ create policy "account_deletion_requests: own data" on public.account_deletion_r
   for all using (auth.uid() = user_id);
 
 grant select, insert, update, delete on table public.account_deletion_requests to authenticated;
+
+-- ============================================================
+-- Migration additive — champs pour le contrat de bail complet
+-- (conforme décret n°2015-587 du 29 mai 2015, annexe 1 / loi n°89-462).
+-- Voir supabase/migration_bail_complet.sql pour l'exécuter séparément sur
+-- un projet déjà existant. Aucune colonne existante n'est modifiée.
+-- ============================================================
+
+alter table public.profiles add column if not exists adresse text;
+alter table public.profiles add column if not exists code_postal text;
+alter table public.profiles add column if not exists ville text;
+
+alter table public.biens add column if not exists type_habitat text
+  check (type_habitat in ('individuel', 'collectif'));
+alter table public.biens add column if not exists regime_juridique text
+  check (regime_juridique in ('copropriete', 'monopropriete'));
+alter table public.biens add column if not exists dpe_classe text
+  check (dpe_classe in ('A', 'B', 'C', 'D', 'E', 'F', 'G'));
+alter table public.biens add column if not exists annexes text;
+alter table public.biens add column if not exists equipements text;
+alter table public.biens add column if not exists equipements_communs text;
+alter table public.biens add column if not exists chauffage_type text
+  check (chauffage_type in ('individuel', 'collectif'));
+alter table public.biens add column if not exists eau_chaude_type text
+  check (eau_chaude_type in ('individuel', 'collectif'));
+alter table public.biens add column if not exists acces_technologies text;
+
+alter table public.baux add column if not exists mandataire_nom text;
+alter table public.baux add column if not exists mandataire_adresse text;
+alter table public.baux add column if not exists irl_trimestre_reference text;
+alter table public.baux add column if not exists irl_valeur_reference numeric(8,2);
+alter table public.baux add column if not exists dernier_loyer_precedent numeric(10,2);
+alter table public.baux add column if not exists charges_type text
+  check (charges_type in ('provisions', 'forfait')) default 'provisions';
+alter table public.baux add column if not exists travaux_bailleur text;
+alter table public.baux add column if not exists travaux_amelioration text;
+alter table public.baux add column if not exists honoraires_locataire numeric(10,2);
+alter table public.baux add column if not exists honoraires_bailleur numeric(10,2);
+alter table public.baux add column if not exists colocataires_supplementaires text;
+alter table public.baux add column if not exists conditions_particulieres text;
