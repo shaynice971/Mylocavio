@@ -131,18 +131,25 @@ const MOIS_FR = [
   "juillet", "août", "septembre", "octobre", "novembre", "décembre",
 ];
 
+// La colonne "mois" est de type `date` en base : Supabase/PostgREST renvoie
+// donc toujours une date complète "AAAA-MM-JJ" (jour conventionnellement à 01),
+// jamais juste "AAAA-MM". On gère quand même ce second format par sécurité.
+function parseMoisDate(dateStr: string): Date {
+  return new Date(dateStr.length <= 7 ? dateStr + "-01" : dateStr);
+}
+
 function formatMois(dateStr: string): string {
-  const d = new Date(dateStr + "-01");
+  const d = parseMoisDate(dateStr);
   return MOIS_FR[d.getUTCMonth()] + " " + d.getUTCFullYear();
 }
 
 function premierJour(dateStr: string): string {
-  const d = new Date(dateStr + "-01");
+  const d = parseMoisDate(dateStr);
   return "1er " + MOIS_FR[d.getUTCMonth()] + " " + d.getUTCFullYear();
 }
 
 function dernierJour(dateStr: string): string {
-  const d = new Date(dateStr + "-01");
+  const d = parseMoisDate(dateStr);
   const last = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0));
   return last.getUTCDate() + " " + MOIS_FR[last.getUTCMonth()] + " " + last.getUTCFullYear();
 }
