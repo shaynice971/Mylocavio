@@ -53,6 +53,14 @@ export default function NouveauBienPage() {
       return;
     }
 
+    // Garde-fou : la table "biens" référence profiles(id) en clé étrangère.
+    // Le profil est normalement créé automatiquement à l'inscription (trigger
+    // on_auth_user_created), mais s'il manquait pour une raison quelconque
+    // (compte créé avant l'ajout du trigger, échec silencieux...), l'insertion
+    // du bien échouerait avec une violation de clé étrangère. On s'assure ici
+    // qu'il existe avant de continuer, sans écraser un profil déjà présent.
+    await supabase.from("profiles").upsert({ id: user.id }, { onConflict: "id", ignoreDuplicates: true });
+
     const payload = {
       user_id: user.id,
       adresse: form.adresse,
@@ -75,6 +83,9 @@ export default function NouveauBienPage() {
       .single();
 
     if (insertError || !data) {
+      // Message convivial affiché à l'utilisateur, détail technique conservé
+      // en console pour le diagnostic (jamais exposé à l'écran).
+      if (insertError) console.error("Échec insertion bien:", insertError);
       setError(GENERIC_SAVE_ERROR);
       setLoading(false);
       return;
