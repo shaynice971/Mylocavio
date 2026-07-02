@@ -1,7 +1,128 @@
 # Rapport d'audit MyLocavio — session du 01/07/2026
 
-Branche : `claude/mylocavio-audit-improvements-74qgek` (6 commits, non mergée sur `main`).
+Branche : `claude/mylocavio-audit-improvements-74qgek` (non mergée sur `main`).
 Ce rapport couvre l'audit technique/sécurité, la veille concurrentielle et les améliorations produit réalisées en autonomie. **Aucune clé n'a été exposée, aucune donnée supprimée, aucun déploiement production déclenché.**
+
+---
+
+## ⚠️ AVERTISSEMENT IMPORTANT SUR L'ENVIRONNEMENT DE TEST (à lire en premier)
+
+Cet environnement d'exécution sandbox **n'a accès ni aux vraies variables d'environnement Supabase de Melissa, ni à un déploiement Vercel réel, ni à Docker** (donc impossible de lancer la stack Supabase complète — Postgres + PostgREST + GoTrue — via `supabase start`). Je ne peux donc pas me connecter au projet Supabase réel ni au site déployé.
+
+Pour rester aussi rigoureux que possible malgré cette contrainte, chaque bug ci-dessous a été **reproduit sur une vraie instance PostgreSQL 16 installée localement, avec le schéma SQL réel du projet (`supabase/schema.sql`), les vraies policies RLS, le vrai trigger de création de profil, et pour BUG 3 en appelant réellement le moteur `@react-pdf/renderer` via le vrai serveur Next.js** — ce n'est pas une simple relecture de code. La limite précise de chaque preuve (ce qui est testé en conditions réelles vs. ce qui reste une hypothèse non confirmée faute d'accès) est indiquée explicitement dans chaque section.
+
+---
+
+## BUG 1 — Thème sombre : AUCUNE TRACE TROUVÉE, confirmé en clair partout
+
+**Méthode :** grep exhaustif de tous les fichiers sous `src/` (pas seulement ceux touchés lors de l'audit précédent) à la recherche de `bg-black`, `bg-slate-900`, `bg-gray-900`, `bg-zinc-900`, `dark:bg-`, `#0A0E1A`, `#0D1117`, `#080B14`, toute classe `.dark` appliquée dynamiquement, tout `ThemeProvider`/`next-themes`. Puis vérification visuelle réelle (captures d'écran Playwright + mesure de `getComputedStyle(document.body).backgroundColor`) sur **19 pages**, y compris les 8 pages du dashboard (middleware temporairement contourné en local uniquement pour la capture, restauré immédiatement après, jamais commité — vérifié via `git diff` propre).
+
+**Résultat mesuré (pas juste visuel) sur les 19 pages testées :**
+
+| Page | `background-color` mesuré | Classe `.dark` présente |
+|---|---|---|
+| `/` (accueil), `/connexion`, `/inscription`, `/mot-de-passe-oublie`, `/mentions-legales`, `/confidentialite`, `/cgu`, `/contact`, `/dashboard`, `/biens`, `/biens/nouveau`, `/quittances`, `/documents`, `/etats-des-lieux`, `/etats-des-lieux/nouveau`, `/baux/nouveau`, `/relances`, `/parametres`, page 404 | `rgb(255, 255, 255)` (blanc pur) sur les 19 | Non, sur les 19 |
+
+Vérification du code source (`globals.css`) : les variables CSS de `:root` sont toutes claires (`--background: 0 0% 100%`, `--foreground: 0 0% 8%`, `--primary: 201 66% 51%` = `#2A9FD6`), aucun bloc `.dark { ... }` n'existe dans le fichier, et aucun composant n'ajoute jamais la classe `dark` au DOM (pas de `ThemeProvider`, pas de `next-themes`, pas de `classList.add`). Les seules occurrences de `dark:` restantes sont dans les composants shadcn/ui génériques (`button.tsx`, `input.tsx`, `badge.tsx`) : elles sont inertes puisque la classe `.dark` n'est jamais appliquée.
+
+**Statut : ✅ CONFIRMÉ RÉSOLU, avec preuve mesurée sur 19 pages.** Rien à corriger de plus — le thème est entièrement clair.
+
+---
+
+## BUG 2 — Impossible d'ajouter un bien
+
+### Reproduction
+
+Je n'ai pas pu reproduire ce bug sur le vrai environnement de Melissa (voir avertissement ci-dessus). Reproduit sur PostgreSQL 16 local avec le schéma réel du projet, le trigger réel `handle_new_user()`, les policies RLS réelles, et le rôle `authenticated` avec `auth.uid()` simulé exactement comme Supabase le fait.
+
+**Étape 1 :** j'ai comparé le payload exact envoyé par `src/app/(dashboard)/biens/nouveau/page.tsx` avec les colonnes réelles de la table `biens` dans `supabase/schema.sql` : ils correspondent parfaitement (contrairement à un bug similaire déjà corrigé la session précédente sur `baux/nouveau`, qui envoyait des colonnes `loyer_hc`/`duree_mois` inexistantes). Une insertion "biens" avec un compte dont le profil existe déjà fonctionne sans erreur — confirmé.
+
+**Étape 2 — cause racine trouvée :** les 9 tables applicatives (`biens`, `locataires`, `baux`, `quittances`, `documents`, `relances`, `etats_des_lieux`, `contact_messages`, `account_deletion_requests`) référencent toutes `public.profiles(id)` en clé étrangère. Ce profil n'est créé automatiquement que par le trigger `on_auth_user_created`, qui ne se déclenche qu'à l'INSERT dans `auth.users` (c.-à-d. à l'inscription). **Si un compte existait avant que ce trigger n'ait été appliqué (ou si le trigger a échoué silencieusement pour une raison quelconque), ce compte n'a pas de ligne dans `profiles`.**
+
+**Message d'erreur exact reproduit** (compte simulé sans profil, insertion "biens" avec le payload exact du code) :
+
+```
+ERROR:  insert or update on table "biens" violates foreign key constraint "biens_user_id_fkey"
+DETAIL:  Key is not present in table "profiles".
+```
+
+Ce message correspond exactement au type de symptôme décrit ("l'ajout d'un bien échoue avec un message d'erreur") : la case reste bloquée, rien n'est enregistré. Avec les messages d'erreur français ajoutés lors de l'audit précédent, l'utilisateur ne voit qu'un générique "Une erreur est survenue lors de l'enregistrement." sans indice sur la cause réelle.
+
+### Correctif (double niveau)
+
+1. **`supabase/migration_backfill_profiles.sql`** (additif, idempotent, à exécuter par Melissa) : crée rétroactivement tous les profils manquants pour les comptes `auth.users` existants, sans toucher à un seul profil déjà présent. Corrige d'un coup tous les comptes déjà cassés, sur toutes les tables dépendantes.
+2. **`biens/nouveau/page.tsx`** : garde-fou applicatif — avant l'insertion du bien, un `upsert` sur `profiles` (`onConflict: "id"`, `ignoreDuplicates: true`) s'assure que le profil existe, sans jamais écraser un profil déjà rempli. Auto-répare le compte même si le trigger venait à échouer à nouveau à l'avenir. L'erreur technique réelle est désormais loguée en `console.error` (diagnostic) en plus du message convivial affiché.
+
+### PREUVE (test de bout en bout réel sur PostgreSQL 16)
+
+| Étape | Résultat |
+|---|---|
+| Compte de test créé sans profil (`DELETE` de la ligne `profiles` après inscription simulée) | `profils_pour_cet_utilisateur = 0` |
+| Insertion "bien" avec le payload exact du code, AVANT correctif | `ERROR: insert or update on table "biens" violates foreign key constraint "biens_user_id_fkey"` (reproduit) |
+| Application de `migration_backfill_profiles.sql` | `INSERT 0 1` (le profil manquant est créé) puis ré-exécution : `INSERT 0 0` (idempotent, confirmé) |
+| Même insertion "bien" avec le MÊME compte, APRÈS correctif | **Réussit** : `id=41a0fbed-2aa3-4d4c-8906-24f76d58d2cb, adresse="5 avenue Test", ville="Lyon", loyer=900.00, statut="vacant"` |
+| Test du garde-fou applicatif seul (upsert profil + insert bien, nouveau compte cassé, SANS lancer la migration séparée) | **Réussit** : `id=a5fd4c9a-9f21-44e2-83a1-fe3aaf49e516, adresse="18 rue du Test", ville="Marseille", loyer=550.00` |
+| Vérification que l'upsert ne détruit pas un profil existant rempli (prénom "Jean", nom "Dupont") | Confirmé préservé après upsert (`INSERT 0 0`, aucune écriture) |
+
+**Statut : ✅ Cause racine identifiée avec message d'erreur exact, corrigée à deux niveaux, et prouvée fonctionnelle par test réel avant/après sur base PostgreSQL avec le schéma et le code exacts du projet.**
+
+**Limite honnête :** je n'ai pas pu confirmer que c'est *exactement* la cause que rencontre Melissa dans son propre projet Supabase (je n'ai pas accès à son compte de test ni aux logs Vercel/Supabase réels). C'est une cause racine réelle, reproductible et à fort impact (9 tables concernées) que j'ai trouvée en auditant le schéma — pas une hypothèse en l'air. Si le bug persiste après ces correctifs, la prochaine étape de diagnostic est d'ouvrir la console navigateur (onglet Réseau) au moment du clic sur "Ajouter le bien" et de relever le message d'erreur Supabase exact retourné.
+
+---
+
+## BUG 3 — Génération PDF (bail, état des lieux, quittance)
+
+### Méthode
+
+Le moteur de rendu (`@react-pdf/renderer`) ne peut pas être testé "à froid" (ce n'est pas une base de données) : je l'ai donc appelé **réellement**, en conditions de production identiques à celles des routes API (mêmes composants `BailPDF.tsx` / `QuittancePDF.tsx` / `EtatDesLieuxPDF.tsx`, même fonction `renderToBuffer`), via trois routes de test temporaires appelées en HTTP sur le vrai serveur Next.js local, avec des données réalistes. Ces routes de test ont été supprimées avant les commits finaux (jamais présentes dans l'historique git).
+
+### Résultat pour chacun des 3 documents
+
+| Document | HTTP | Type MIME | Taille | Validité (`file`) | Contenu vérifié (`pdftotext` + rendu image) |
+|---|---|---|---|---|---|
+| **Bail** (vide, 3 ans) | 200 | `application/pdf` | 5 409 octets | PDF 1.3, 2 pages | ✅ Toutes les sections (parties, logement, durée, finances, obligations, signatures) correctement remplies avec les bonnes dates et montants |
+| **État des lieux** (entrée) | 200 | `application/pdf` | 6 800 octets | PDF 1.3, 2 pages | ✅ 6 pièces avec état et observations, numérotation de sections correcte |
+| **Quittance de loyer** | 200 | `application/pdf` | 3 933 octets | PDF 1.3, 1 page | ⚠️ Généré et lisible, MAIS avec un bug de contenu trouvé et corrigé (voir ci-dessous) |
+
+**Conclusion :** le moteur de génération PDF lui-même (`@react-pdf/renderer`, les 3 composants React, `renderToBuffer`) fonctionne **parfaitement**. Aucune erreur 500, aucun crash, aucun composant manquant. Ce n'est donc pas là qu'il faut chercher un "échec total" de génération.
+
+### Bug réel trouvé et corrigé : quittance affichait "undefined NaN"
+
+En testant avec le **format exact** que Supabase renvoie pour une colonne SQL de type `date` (`"2026-07-01"`, pas `"2026-07"` comme le supposait à tort le commentaire de l'interface TypeScript), j'ai découvert que `QuittancePDF.tsx` calculait :
+
+```js
+new Date(dateStr + "-01")   // "2026-07-01" + "-01" = "2026-07-01-01" → Invalid Date
+```
+
+**Résultat réel avec les vraies données Supabase :** la quittance se génère (pas d'erreur), mais affiche littéralement **"Période : undefined NaN"** au lieu de "Période : juillet 2026", et la ligne "du ... au ..." est également cassée.
+
+**Preuve avant/après (Node.js direct, puis via le vrai moteur react-pdf) :**
+
+```
+=== AVANT correctif, avec le format réel Supabase "2026-07-01" ===
+dateStr + '-01' = 2026-07-01-01
+new Date(...) = Invalid Date | valide: false
+résultat: undefined NaN
+
+=== APRÈS correctif, même donnée "2026-07-01" ===
+résultat: juillet 2026
+```
+
+Confirmé ensuite en générant un vrai PDF via le serveur Next.js avec `mois: "2026-07-01"` (format réel) : le texte extrait affiche bien `Période : juillet 2026`.
+
+**Correctif :** ajout d'une fonction `parseMoisDate()` dans `QuittancePDF.tsx` qui gère correctement le format réel (`"AAAA-MM-JJ"`) tout en restant compatible avec un éventuel `"AAAA-MM"`. Vérifié que `BailPDF.tsx` et `EtatDesLieuxPDF.tsx` n'ont pas ce même bug (ils font `new Date(dateStr)` directement sur les colonnes `date`, sans concaténation, donc pas de problème).
+
+### Ce qui a été corrigé mais PAS confirmé comme la cause
+
+`next.config.mjs` utilisait `serverExternalPackages` (clé stable introduite en **Next.js 15**), silencieusement ignorée par Next 14.2.35 (`⚠ Unrecognized key(s) in object: 'serverExternalPackages'` à **chaque build** depuis le début de l'audit — que j'avais négligé comme du bruit lors des sessions précédentes). Corrigé vers `experimental.serverComponentsExternalPackages`, la clé correcte pour cette version.
+
+**Par honnêteté :** j'ai testé par comparaison directe (build avec l'ancienne config vs. la nouvelle, inspection des fichiers `.nft.json` tracés pour les 3 routes `/api/*/pdf`) et le résultat est **identique dans les deux cas** — `@react-pdf/renderer` était déjà correctement tracé comme dépendance externe pour ces Route Handlers, avec ou sans cette clé (189 fichiers, 4,99 Mo, tous présents, bien en dessous des limites Vercel). **Ce correctif est donc une mise en conformité légitime (silence l'avertissement, prépare une migration Next 15) mais je ne peux pas affirmer qu'il résout un échec de génération PDF réel.**
+
+### Statut final BUG 3
+
+- ✅ **Moteur de rendu PDF confirmé fonctionnel** pour les 3 documents (preuve : fichiers PDF réels générés, validés, contenu vérifié).
+- ✅ **Bug de contenu réel trouvé et corrigé** sur la quittance (date illisible "undefined NaN").
+- ⚠️ **Non confirmé** : si Melissa rencontre un échec *total* (erreur 500, page blanche, timeout) plutôt qu'un contenu incorrect, je n'ai pas pu reproduire ce scénario précis sans accès à son environnement Vercel/Supabase réel. Cause la plus probable, déjà identifiée dans l'audit précédent : si Vercel déploie depuis `main` (qui n'a reçu aucun des correctifs de cette branche), le site tourne potentiellement sur une build antérieure au fix du bug de build critique (`etats-des-lieux/nouveau` cassant `next build`). **Merger cette branche est un prérequis avant tout autre diagnostic.** Si le problème persiste après le merge, la prochaine étape est de consulter les logs de fonction Vercel (Vercel → Deployments → Functions) au moment d'un clic sur "Générer le PDF", pour obtenir l'erreur exacte côté serveur.
 
 ---
 
